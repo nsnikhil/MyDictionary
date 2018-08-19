@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~     Notes  Copyright (C) 2018  Nikhil Soni
+  ~     MyDictionary  Copyright (C) 2018  Nikhil Soni
   ~     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
   ~     This is free software, and you are welcome to redistribute it
   ~     under certain conditions; type `show c' for details.
@@ -22,6 +22,6 @@
   ~ <http://www.gnu.org/philosophy/why-not-lgpl.html>.
   -->
 
-<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+<shortcuts>
 
 </shortcuts>

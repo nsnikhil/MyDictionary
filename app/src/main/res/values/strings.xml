@@ -1,5 +1,5 @@
 <!--
-  ~     Notes  Copyright (C) 2018  Nikhil Soni
+  ~     MyDictionary  Copyright (C) 2018  Nikhil Soni
   ~     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
   ~     This is free software, and you are welcome to redistribute it
   ~     under certain conditions; type `show c' for details.
@@ -44,9 +44,6 @@
                    <a href="https://twitter.com/imnsnik">Twitter</a>|<a href="https://github.com/nsnikhil/">Github</a> </string>
 
     <string name="aboutSourceCode" translatable="false">The source code is available on <a href="https://github.com/nsnikhil/MyDictionary">Github</a></string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
 

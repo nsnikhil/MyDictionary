@@ -1,5 +1,5 @@
 /*
- *     Notes  Copyright (C) 2018  Nikhil Soni
+ *     MyDictionary  Copyright (C) 2018  Nikhil Soni
  *     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
  *     This is free software, and you are welcome to redistribute it
  *     under certain conditions; type `show c' for details.
@@ -47,7 +47,7 @@ class DictionaryEntity{
     companion object {
 
         @Ignore
-        val SERIALIZER: ObjectSerializer<DictionaryEntity> = DictionaryEntitySerializer();
+        val SERIALIZER: ObjectSerializer<DictionaryEntity> = DictionaryEntitySerializer()
 
         class DictionaryEntitySerializer: ObjectSerializer<DictionaryEntity>(){
 

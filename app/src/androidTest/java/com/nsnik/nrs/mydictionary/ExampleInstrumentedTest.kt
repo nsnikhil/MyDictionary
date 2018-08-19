@@ -1,5 +1,5 @@
 /*
- *     Notes  Copyright (C) 2018  Nikhil Soni
+ *     MyDictionary  Copyright (C) 2018  Nikhil Soni
  *     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
  *     This is free software, and you are welcome to redistribute it
  *     under certain conditions; type `show c' for details.
@@ -25,11 +25,9 @@ package com.nsnik.nrs.mydictionary
 
 import androidx.test.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
-
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
-
-import org.junit.Assert.*
 
 /**
  * Instrumented test, which will execute on an Android device.

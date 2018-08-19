@@ -1,5 +1,5 @@
 /*
- *     Notes  Copyright (C) 2018  Nikhil Soni
+ *     MyDictionary  Copyright (C) 2018  Nikhil Soni
  *     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
  *     This is free software, and you are welcome to redistribute it
  *     under certain conditions; type `show c' for details.
@@ -41,7 +41,7 @@ import javax.inject.Inject
 class DbUtil @Inject constructor(private val dictionaryDatabase: DictionaryDatabase) {
 
     fun getWordList(): LiveData<List<DictionaryEntity>> {
-        return dictionaryDatabase.dictionaryDao.getWordList();
+        return dictionaryDatabase.dictionaryDao.getWordList()
     }
 
     fun insertWords(vararg dictionaryEntity: DictionaryEntity) {

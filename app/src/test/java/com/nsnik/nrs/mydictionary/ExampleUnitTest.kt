@@ -1,5 +1,5 @@
 /*
- *     Notes  Copyright (C) 2018  Nikhil Soni
+ *     MyDictionary  Copyright (C) 2018  Nikhil Soni
  *     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
  *     This is free software, and you are welcome to redistribute it
  *     under certain conditions; type `show c' for details.
@@ -23,9 +23,8 @@
 
 package com.nsnik.nrs.mydictionary
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).

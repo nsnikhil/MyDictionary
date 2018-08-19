@@ -1,5 +1,5 @@
 /*
- *     Notes  Copyright (C) 2018  Nikhil Soni
+ *     MyDictionary  Copyright (C) 2018  Nikhil Soni
  *     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
  *     This is free software, and you are welcome to redistribute it
  *     under certain conditions; type `show c' for details.
@@ -42,7 +42,7 @@ class DictionaryListAdapter : ListAdapter<DictionaryEntity, DictionaryListAdapte
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.single_word_layout, parent, false));
+        return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.single_word_layout, parent, false))
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
