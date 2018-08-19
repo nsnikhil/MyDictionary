@@ -1,0 +1,35 @@
+<!--
+  ~     Notes  Copyright (C) 2018  Nikhil Soni
+  ~     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+  ~     This is free software, and you are welcome to redistribute it
+  ~     under certain conditions; type `show c' for details.
+  ~
+  ~ The hypothetical commands `show w' and `show c' should show the appropriate
+  ~ parts of the General Public License.  Of course, your program's commands
+  ~ might be different; for a GUI interface, you would use an "about box".
+  ~
+  ~   You should also get your employer (if you work as a programmer) or school,
+  ~ if any, to sign a "copyright disclaimer" for the program, if necessary.
+  ~ For more information on this, and how to apply and follow the GNU GPL, see
+  ~ <http://www.gnu.org/licenses/>.
+  ~
+  ~   The GNU General Public License does not permit incorporating your program
+  ~ into proprietary programs.  If your program is a subroutine library, you
+  ~ may consider it more useful to permit linking proprietary applications with
+  ~ the library.  If this is what you want to do, use the GNU Lesser General
+  ~ Public License instead of this License.  But first, please read
+  ~ <http://www.gnu.org/philosophy/why-not-lgpl.html>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:fillColor="#FF000000"
+      android:pathData="M12,2C6.48,2 2,6.48 2,12c0,5.52 4.48,10 10,10c5.52,0 10,-4.48 10,-10C22,6.48 17.52,2 12,2zM7.07,18.28c0.43,-0.9 3.05,-1.78 4.93,-1.78s4.51,0.88 4.93,1.78C15.57,19.36 13.86,20 12,20S8.43,19.36 7.07,18.28zM18.36,16.83c-1.43,-1.74 -4.9,-2.33 -6.36,-2.33s-4.93,0.59 -6.36,2.33C4.62,15.49 4,13.82 4,12c0,-4.41 3.59,-8 8,-8c4.41,0 8,3.59 8,8C20,13.82 19.38,15.49 18.36,16.83z"/>
+  <path
+      android:fillColor="#FF000000"
+      android:pathData="M12,6c-1.94,0 -3.5,1.56 -3.5,3.5S10.06,13 12,13c1.94,0 3.5,-1.56 3.5,-3.5S13.94,6 12,6zM12,11c-0.83,0 -1.5,-0.67 -1.5,-1.5C10.5,8.67 11.17,8 12,8c0.83,0 1.5,0.67 1.5,1.5C13.5,10.33 12.83,11 12,11z"/>
+</vector>

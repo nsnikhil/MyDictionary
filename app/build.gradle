@@ -1,0 +1,200 @@
+/*
+ *     Notes  Copyright (C) 2018  Nikhil Soni
+ *     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+ *     This is free software, and you are welcome to redistribute it
+ *     under certain conditions; type `show c' for details.
+ *
+ * The hypothetical commands `show w' and `show c' should show the appropriate
+ * parts of the General Public License.  Of course, your program's commands
+ * might be different; for a GUI interface, you would use an "about box".
+ *
+ *   You should also get your employer (if you work as a programmer) or school,
+ * if any, to sign a "copyright disclaimer" for the program, if necessary.
+ * For more information on this, and how to apply and follow the GNU GPL, see
+ * <http://www.gnu.org/licenses/>.
+ *
+ *   The GNU General Public License does not permit incorporating your program
+ * into proprietary programs.  If your program is a subroutine library, you
+ * may consider it more useful to permit linking proprietary applications with
+ * the library.  If this is what you want to do, use the GNU Lesser General
+ * Public License instead of this License.  But first, please read
+ * <http://www.gnu.org/philosophy/why-not-lgpl.html>.
+ */
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.oss.licenses.plugin'
+apply plugin: 'androidx.navigation.safeargs'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'com.jakewharton.hugo'
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion "28.0.2"
+    defaultConfig {
+        applicationId "com.nsnik.nrs.mydictionary"
+        minSdkVersion 26
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        resConfigs "en"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+    sourceSets {
+        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+    buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-DEBUG'
+            ext.alwaysUpdateBuildId = false
+        }
+        release {
+            shrinkResources false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    allprojects {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "-Xlint:cast" << "-Xlint:empty" << "-Xmaxerrs"
+        }
+    }
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+    }
+    androidExtensions {
+        experimental = true
+    }
+    kapt {
+        correctErrorTypes = true
+        useBuildCache = true
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+
+    implementation "androidx.core:core-ktx:1.0.0-rc01"
+    implementation 'androidx.fragment:fragment-ktx:1.0.0-rc01'
+    implementation 'androidx.collection:collection-ktx:1.0.0-rc01'
+
+    implementation "androidx.appcompat:appcompat:1.0.0-rc01"
+
+    implementation "androidx.recyclerview:recyclerview:1.0.0-rc01"
+    implementation 'androidx.recyclerview:recyclerview-selection:1.0.0-rc01'
+
+    implementation "androidx.annotation:annotation:1.0.0-rc01"
+
+    implementation 'androidx.webkit:webkit:1.0.0-rc01'
+
+    implementation 'com.google.android.material:material:1.0.0-rc01'
+
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
+
+    implementation 'androidx.cardview:cardview:1.0.0-rc01'
+
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+    implementation 'androidx.preference:preference:1.0.0-rc01'
+    implementation 'androidx.legacy:legacy-preference-v14:1.0.0-rc01'
+
+    implementation('com.google.android.gms:play-services-oss-licenses:15.0.1', {
+        exclude group: 'com.google.android.gms'
+    })
+
+    implementation 'androidx.browser:browser:1.0.0-rc01'
+
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
+    implementation "io.reactivex.rxjava2:rxjava:2.1.12"
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
+
+    implementation "com.jakewharton.rxbinding2:rxbinding-kotlin:2.1.1"
+    implementation "com.jakewharton.rxbinding2:rxbinding-support-v4-kotlin:2.1.1"
+    implementation "com.jakewharton.rxbinding2:rxbinding-appcompat-v7-kotlin:2.1.1"
+    implementation "com.jakewharton.rxbinding2:rxbinding-design-kotlin:2.1.1"
+    implementation "com.jakewharton.rxbinding2:rxbinding-recyclerview-v7-kotlin:2.1.1"
+
+    implementation "com.jakewharton.timber:timber:4.7.0"
+
+    implementation 'org.greenrobot:eventbus:3.1.1'
+
+    implementation 'com.google.dagger:dagger:2.16'
+    kapt 'com.google.dagger:dagger-compiler:2.16'
+    implementation 'com.google.dagger:dagger-android:2.16'
+    implementation 'com.google.dagger:dagger-android-support:2.16'
+    kapt 'com.google.dagger:dagger-android-processor:2.16'
+
+    implementation "org.greenrobot:eventbus:3.1.1"
+
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:1.5.4"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.5.4"
+
+    implementation "com.github.markzhai:blockcanary-android:1.5.0"
+
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-rc01'
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.0.0-rc01'
+    implementation 'androidx.lifecycle:lifecycle-reactivestreams:2.0.0-rc01'
+    testImplementation 'androidx.arch.core:core-testing:2.0.0-rc01'
+
+    implementation 'androidx.room:room-runtime:2.0.0-rc01'
+    kapt 'androidx.room:room-compiler:2.0.0-rc01'
+    implementation 'androidx.room:room-rxjava2:2.0.0-rc01'
+    implementation 'androidx.room:room-guava:2.0.0-rc01'
+    testImplementation 'androidx.room:room-testing:2.0.0-rc01'
+
+    implementation 'androidx.paging:paging-runtime:2.0.0-rc01'
+    implementation 'androidx.paging:paging-rxjava2:2.0.0-rc01'
+
+    implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha05'
+    implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha05'
+    androidTestImplementation 'android.arch.navigation:navigation-testing-ktx:1.0.0-alpha05'
+
+    implementation 'android.arch.work:work-runtime-ktx:1.0.0-alpha07'
+    implementation "android.arch.work:work-firebase:1.0.0-alpha07"
+    androidTestImplementation "android.arch.work:work-testing:1.0.0-alpha07"
+
+    implementation "com.twitter.serial:serial:0.1.6"
+    testImplementation "org.mockito:mockito-core:2.19.0"
+    implementation "org.jetbrains:annotations:16.0.1"
+
+    implementation 'com.facebook.stetho:stetho:1.5.0'
+
+    implementation "com.squareup.retrofit2:retrofit:2.4.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:3.10.0"
+    implementation "com.google.code.gson:gson:2.8.5"
+    implementation "com.squareup.retrofit2:converter-gson:2.4.0"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.4.0"
+
+    testImplementation 'junit:junit:4.12'
+
+    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
+    androidTestImplementation 'androidx.test:rules:1.1.0-alpha4'
+    androidTestUtil 'androidx.test:orchestrator:1.1.0-alpha4'
+
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.1.0-alpha4'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0-alpha4'
+    androidTestImplementation 'androidx.test.espresso:espresso-accessibility:3.1.0-alpha4'
+    androidTestImplementation 'androidx.test.espresso:espresso-web:3.1.0-alpha4'
+    implementation 'androidx.test.espresso.idling:idling-concurrent:3.1.0-alpha4'
+
+    testImplementation "org.robolectric:robolectric:3.8"
+}

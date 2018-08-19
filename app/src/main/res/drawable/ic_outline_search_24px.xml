@@ -1,0 +1,32 @@
+<!--
+  ~     Notes  Copyright (C) 2018  Nikhil Soni
+  ~     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+  ~     This is free software, and you are welcome to redistribute it
+  ~     under certain conditions; type `show c' for details.
+  ~
+  ~ The hypothetical commands `show w' and `show c' should show the appropriate
+  ~ parts of the General Public License.  Of course, your program's commands
+  ~ might be different; for a GUI interface, you would use an "about box".
+  ~
+  ~   You should also get your employer (if you work as a programmer) or school,
+  ~ if any, to sign a "copyright disclaimer" for the program, if necessary.
+  ~ For more information on this, and how to apply and follow the GNU GPL, see
+  ~ <http://www.gnu.org/licenses/>.
+  ~
+  ~   The GNU General Public License does not permit incorporating your program
+  ~ into proprietary programs.  If your program is a subroutine library, you
+  ~ may consider it more useful to permit linking proprietary applications with
+  ~ the library.  If this is what you want to do, use the GNU Lesser General
+  ~ Public License instead of this License.  But first, please read
+  ~ <http://www.gnu.org/philosophy/why-not-lgpl.html>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:fillColor="#FF000000"
+      android:pathData="M15.5,14h-0.79l-0.28,-0.27C15.41,12.59 16,11.11 16,9.5C16,5.91 13.09,3 9.5,3S3,5.91 3,9.5S5.91,16 9.5,16c1.61,0 3.09,-0.59 4.23,-1.57L14,14.71v0.79l5,4.99L20.49,19L15.5,14zM9.5,14C7.01,14 5,11.99 5,9.5S7.01,5 9.5,5S14,7.01 14,9.5S11.99,14 9.5,14z"/>
+</vector>
