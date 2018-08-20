@@ -25,10 +25,12 @@ package com.nsnik.nrs.mydictionary.util
 
 import com.nsnik.nrs.mydictionary.dagger.scopes.ApplicationScope
 import com.nsnik.nrs.mydictionary.model.DictionaryEntity
+import com.nsnik.nrs.mydictionary.util.eventBus.WordListDownloaded
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import org.greenrobot.eventbus.EventBus
 import retrofit2.Retrofit
 import timber.log.Timber
 import javax.inject.Inject
@@ -43,7 +45,7 @@ class NetworkUtil @Inject constructor(private val retrofit: Retrofit) {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : SingleObserver<List<DictionaryEntity>> {
                     override fun onSuccess(t: List<DictionaryEntity>) {
-
+                        EventBus.getDefault().post(WordListDownloaded(t))
                     }
 
                     override fun onSubscribe(d: Disposable) {
@@ -58,7 +60,7 @@ class NetworkUtil @Inject constructor(private val retrofit: Retrofit) {
 
     fun insertWord(dictionaryEntity: DictionaryEntity) {
         retrofit.create(DictionaryNetwrokApi::class.java)
-                .addWord(dictionaryEntity.word, dictionaryEntity.meaning, dictionaryEntity.dateModified)
+                .addWord(dictionaryEntity.word, dictionaryEntity.meaning)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : SingleObserver<String> {

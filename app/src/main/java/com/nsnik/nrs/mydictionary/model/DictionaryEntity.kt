@@ -27,6 +27,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import com.google.gson.annotations.SerializedName
 import com.twitter.serial.serializer.CoreSerializers
 import com.twitter.serial.serializer.ObjectSerializer
 import com.twitter.serial.serializer.SerializationContext
@@ -38,10 +39,14 @@ import java.util.*
 class DictionaryEntity{
 
     @PrimaryKey(autoGenerate = true)
+    @SerializedName("id")
     var id: Int = 0
+    @SerializedName("word")
     var word: String? = null
+    @SerializedName("meaning")
     var meaning: String? = null
     @TypeConverters(DateConverter::class)
+    @SerializedName("modifieddate")
     var dateModified: Date? = null
 
     companion object {

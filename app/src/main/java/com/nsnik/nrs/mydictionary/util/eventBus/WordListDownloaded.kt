@@ -21,23 +21,8 @@
  * <http://www.gnu.org/philosophy/why-not-lgpl.html>.
  */
 
-package com.nsnik.nrs.mydictionary.model
+package com.nsnik.nrs.mydictionary.util.eventBus
 
-import androidx.lifecycle.LiveData
-import androidx.room.*
+import com.nsnik.nrs.mydictionary.model.DictionaryEntity
 
-@Dao
-interface DictionaryDao {
-
-    @Query("SELECT * FROM DictionaryEntity")
-    fun getWordList(): LiveData<List<DictionaryEntity>>
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertWords(dictionaryEntity: List<DictionaryEntity>): LongArray
-
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun updateWords(dictionaryEntity: List<DictionaryEntity>): Int
-
-    @Delete
-    fun deleteWord(dictionaryEntity: List<DictionaryEntity>)
-}
+class WordListDownloaded(val wordList: List<DictionaryEntity>)

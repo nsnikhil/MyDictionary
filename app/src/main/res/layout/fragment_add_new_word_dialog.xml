@@ -23,57 +23,67 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/horizontal">
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/horizontal"
+    android:padding="@dimen/eight"
+    tools:context="com.nsnik.nrs.mydictionary.views.fragments.dialog.AddNewWordDialogFragment">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/aboutNikhil"
-        style="@style/wrapContent"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/newEntryWordContainer"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
-        android:layout_marginTop="@dimen/sixteen"
-        android:text="@string/aboutNikhil"
-        android:textAlignment="center"
-        android:textSize="16sp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/eight"
+        android:hint="@string/newEntryWordHint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/aboutSourceCode"
-        style="@style/wrapContent"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/newEntryWord"
+            style="@style/matchParent"
+            android:inputType="textAutoCorrect" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/newEntryMeaningContainer"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/sixteen"
-        android:padding="@dimen/sixteen"
-        android:text="@string/aboutSourceCode"
-        android:textAlignment="center"
-        android:textSize="16sp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/eight"
+        android:hint="@string/newEntryMeaningHint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/aboutNikhil" />
+        app:layout_constraintTop_toBottomOf="@id/newEntryWordContainer">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/newEntryMeaning"
+            style="@style/matchParent" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/aboutLibraries"
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:id="@+id/newEntryCancel"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/sixteen"
-        android:text="@string/aboutLibraries"
+        android:layout_margin="@dimen/eight"
+        android:text="@string/newEntryCancel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/aboutSourceCode" />
+        app:layout_constraintTop_toBottomOf="@id/newEntryMeaningContainer" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/aboutLicense"
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:id="@+id/newEntryAdd"
+        style="@style/Base.Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/sixteen"
-        android:layout_marginBottom="@dimen/sixteen"
-        android:text="@string/aboutLicense"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/eight"
+        android:text="@string/newEntryAdd"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/aboutLibraries" />
+        app:layout_constraintTop_toBottomOf="@id/newEntryMeaningContainer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

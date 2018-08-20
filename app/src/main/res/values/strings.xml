@@ -45,5 +45,12 @@
 
     <string name="aboutSourceCode" translatable="false">The source code is available on <a href="https://github.com/nsnikhil/MyDictionary">Github</a></string>
 
+    <!-- NEW ENTRY DIALOG -->
+    <string name="newEntryWordHint">Word</string>
+    <string name="newEntryMeaningHint">Meaning</string>
+    <string name="newEntryCancel">Cancel</string>
+    <string name="newEntryAdd">Add</string>
+    <!-- -->
+
 </resources>
 

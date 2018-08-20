@@ -25,8 +25,47 @@ package com.nsnik.nrs.mydictionary.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import com.nsnik.nrs.mydictionary.MyApplication
+import com.nsnik.nrs.mydictionary.model.DictionaryEntity
+import com.nsnik.nrs.mydictionary.util.DbUtil
+import com.nsnik.nrs.mydictionary.util.NetworkUtil
 
-class DictionaryViewModel(application: Application): AndroidViewModel(application){
+class DictionaryViewModel(application: Application) : AndroidViewModel(application) {
 
-    //private val mDbUtil: DbUtil = (application as MyApplication).dbUtil
+    private val dbUtil: DbUtil = (application as MyApplication).dbUtil
+    private val netwrokUtil: NetworkUtil = (application as MyApplication).networkUtil
+
+    fun getLocalList(): LiveData<List<DictionaryEntity>> {
+        return dbUtil.getWordList()
+    }
+
+    fun insertLocal(dictionaryEntity: List<DictionaryEntity>) {
+        dbUtil.insertWords(dictionaryEntity)
+    }
+
+    fun updateLocal(dictionaryEntity: List<DictionaryEntity>) {
+        dbUtil.updateWords(dictionaryEntity)
+    }
+
+    fun deleteLocal(dictionaryEntity: List<DictionaryEntity>) {
+        dbUtil.deleteWord(dictionaryEntity)
+    }
+
+    fun getRemoteList() {
+        netwrokUtil.getWordList()
+    }
+
+    fun insertRemote(vararg dictionaryEntity: DictionaryEntity) {
+        dictionaryEntity.forEach { netwrokUtil.insertWord(it) }
+    }
+
+    fun updateRemote(vararg dictionaryEntity: DictionaryEntity) {
+        dictionaryEntity.forEach { netwrokUtil.updateWord(it) }
+    }
+
+    fun deleteRemote(vararg id: Int) {
+        id.forEach { netwrokUtil.deleteWord(it) }
+    }
+
 }

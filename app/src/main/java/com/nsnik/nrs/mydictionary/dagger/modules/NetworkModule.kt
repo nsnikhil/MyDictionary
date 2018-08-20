@@ -37,7 +37,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Module(includes = [(ContextModule::class)])
 class NetworkModule {
 
-    private val baseUrl: String = "http://ssh.strangebits.co.in"
+    private val baseUrl: String = "http://138.68.74.29"
 
     @Provides
     @BaseUrl
@@ -66,7 +66,10 @@ class NetworkModule {
                 .baseUrl(baseUrl)
                 .client(okHttpClient)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
+                .addConverterFactory(GsonConverterFactory.create(GsonBuilder()
+                        .setDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSSX")
+                        .setLenient()
+                        .create()))
                 .build()
     }
 

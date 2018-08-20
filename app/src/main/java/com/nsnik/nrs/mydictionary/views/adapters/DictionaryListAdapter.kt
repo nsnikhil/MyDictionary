@@ -27,17 +27,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxbinding2.view.RxView
 import com.nsnik.nrs.mydictionary.R
 import com.nsnik.nrs.mydictionary.model.DictionaryEntity
 import com.nsnik.nrs.mydictionary.views.adapters.diffUtils.DictionaryDiffUtil
+import com.nsnik.nrs.mydictionary.views.listeners.ItemClickListener
+import com.nsnik.nrs.mydictionary.views.listeners.ItemLongClickListener
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.single_word_layout.view.*
-import timber.log.Timber
 
-class DictionaryListAdapter : ListAdapter<DictionaryEntity, DictionaryListAdapter.MyViewHolder>(DictionaryDiffUtil()) {
+class DictionaryListAdapter(val itemClickListener: ItemClickListener, val itemLongClickListener: ItemLongClickListener) : ListAdapter<DictionaryEntity, DictionaryListAdapter.MyViewHolder>(DictionaryDiffUtil()) {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
@@ -53,16 +55,13 @@ class DictionaryListAdapter : ListAdapter<DictionaryEntity, DictionaryListAdapte
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val word: TextView = itemView.itemWord
-        val meaning: TextView = itemView.itemWord
+        val meaning: TextView = itemView.itemMeaning
+        val container: ConstraintLayout = itemView.itemContainer
 
         init {
             compositeDisposable.addAll(
-                    RxView.clicks(itemView).subscribe {
-                        Timber.d(getItem(adapterPosition).word)
-                    },
-                    RxView.longClicks(itemView).subscribe {
-                        Timber.d(getItem(adapterPosition).meaning)
-                    }
+                    RxView.clicks(container).subscribe { itemClickListener.itemClicked(getItem(adapterPosition)) },
+                    RxView.longClicks(container).subscribe { itemLongClickListener.itemLongClicked(getItem(adapterPosition), container) }
             )
         }
     }

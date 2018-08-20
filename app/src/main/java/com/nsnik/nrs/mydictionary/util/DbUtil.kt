@@ -44,7 +44,7 @@ class DbUtil @Inject constructor(private val dictionaryDatabase: DictionaryDatab
         return dictionaryDatabase.dictionaryDao.getWordList()
     }
 
-    fun insertWords(vararg dictionaryEntity: DictionaryEntity) {
+    fun insertWords(dictionaryEntity: List<DictionaryEntity>) {
         val single = Single.fromCallable { dictionaryDatabase.dictionaryDao.insertWords(dictionaryEntity) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -66,7 +66,7 @@ class DbUtil @Inject constructor(private val dictionaryDatabase: DictionaryDatab
         })
     }
 
-    fun updateWords(vararg dictionaryEntity: DictionaryEntity) {
+    fun updateWords(dictionaryEntity: List<DictionaryEntity>) {
         val single = Single.fromCallable { dictionaryDatabase.dictionaryDao.updateWords(dictionaryEntity) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -85,7 +85,7 @@ class DbUtil @Inject constructor(private val dictionaryDatabase: DictionaryDatab
         })
     }
 
-    fun deleteWord(vararg dictionaryEntity: DictionaryEntity) {
+    fun deleteWord(dictionaryEntity: List<DictionaryEntity>) {
         val completable = Completable.fromCallable { dictionaryDatabase.dictionaryDao.deleteWord(dictionaryEntity) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -39,8 +39,7 @@ interface DictionaryNetwrokApi {
     @FormUrlEncoded
     @POST("/php/insert.php")
     fun addWord(@Field("word") word: String?,
-                @Field("meaning") meaning: String?,
-                @Field("modifieddate") modifieddate: Date?): Single<String>
+                @Field("meaning") meaning: String?): Single<String>
 
     @FormUrlEncoded
     @POST("/php/update.php")

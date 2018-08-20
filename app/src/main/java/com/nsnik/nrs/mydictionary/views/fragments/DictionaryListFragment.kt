@@ -24,25 +24,37 @@
 package com.nsnik.nrs.mydictionary.views.fragments
 
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.jakewharton.rxbinding2.support.v7.widget.RxPopupMenu
 import com.jakewharton.rxbinding2.view.RxView
 import com.nsnik.nrs.mydictionary.R
+import com.nsnik.nrs.mydictionary.model.DictionaryEntity
+import com.nsnik.nrs.mydictionary.util.eventBus.WordListDownloaded
 import com.nsnik.nrs.mydictionary.viewModel.DictionaryViewModel
 import com.nsnik.nrs.mydictionary.views.MainActivity
 import com.nsnik.nrs.mydictionary.views.adapters.DictionaryListAdapter
 import com.nsnik.nrs.mydictionary.views.fragments.dialog.AboutDialogFragment
+import com.nsnik.nrs.mydictionary.views.fragments.dialog.AddNewWordDialogFragment
+import com.nsnik.nrs.mydictionary.views.listeners.ItemClickListener
+import com.nsnik.nrs.mydictionary.views.listeners.ItemLongClickListener
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_dictionary_list.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
 
-class DictionaryListFragment : Fragment() {
+class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListener {
 
     private lateinit var dictionaryListAdapter: DictionaryListAdapter
     private lateinit var dictionaryViewModel: DictionaryViewModel
@@ -60,7 +72,7 @@ class DictionaryListFragment : Fragment() {
     }
 
     private fun initialize() {
-        dictionaryListAdapter = DictionaryListAdapter()
+        dictionaryListAdapter = DictionaryListAdapter(this, this)
 
         dictionaryList.apply {
             layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
@@ -68,13 +80,13 @@ class DictionaryListFragment : Fragment() {
         }
 
         dictionaryViewModel = ViewModelProviders.of(this).get(DictionaryViewModel::class.java)
+        dictionaryViewModel.getRemoteList()
+        dictionaryViewModel.getLocalList().observe(this, Observer { dictionaryListAdapter.submitList(it) })
     }
 
     private fun listeners() {
         compositeDisposable.addAll(
-                RxView.clicks(addWord).subscribe {
-                    Timber.d("Click")
-                }
+                RxView.clicks(addWord).subscribe { AddNewWordDialogFragment().show(fragmentManager, "newWordDialog") }
         )
     }
 
@@ -90,6 +102,46 @@ class DictionaryListFragment : Fragment() {
             R.id.menuListAbout -> AboutDialogFragment().show(fragmentManager, "aboutDialog")
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun itemClicked(dictionaryEntity: DictionaryEntity) {
+
+    }
+
+    override fun itemLongClicked(dictionaryEntity: DictionaryEntity, view: View) {
+        inflatePopupMenu(dictionaryEntity, view)
+    }
+
+    @SuppressLint("CheckResult")
+    private fun inflatePopupMenu(dictionaryEntity: DictionaryEntity, view: View) {
+        val popupMenu = PopupMenu(activity as Context, view, Gravity.END)
+        popupMenu.inflate(R.menu.item_popup_menu)
+        RxPopupMenu.itemClicks(popupMenu).subscribe {
+            when (it.itemId) {
+                R.id.popUpMenuEdit -> {
+                    Timber.d("Edit")
+                }
+                R.id.popUpMenuDelete -> {
+                    Timber.d("Delete")
+                }
+            }
+        }
+        popupMenu.show()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe
+    fun WordListDownloadedEvent(wordListDownloaded: WordListDownloaded) {
+        dictionaryViewModel.insertLocal(wordListDownloaded.wordList)
     }
 
     private fun cleanUp() {
