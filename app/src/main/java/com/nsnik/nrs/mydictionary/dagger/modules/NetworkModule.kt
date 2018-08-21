@@ -54,9 +54,7 @@ class NetworkModule {
 
     @Provides
     fun getOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
-        return OkHttpClient.Builder()
-                .addInterceptor(httpLoggingInterceptor)
-                .build()
+        return OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor).build()
     }
 
     @Provides
@@ -66,10 +64,7 @@ class NetworkModule {
                 .baseUrl(baseUrl)
                 .client(okHttpClient)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(GsonBuilder()
-                        .setDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSSX")
-                        .setLenient()
-                        .create()))
+                .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
                 .build()
     }
 

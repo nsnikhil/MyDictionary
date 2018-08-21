@@ -24,21 +24,22 @@
 package com.nsnik.nrs.mydictionary.views.fragments.dialog
 
 
+import android.app.Dialog
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
-import androidx.work.*
+import com.google.android.material.textfield.TextInputEditText
 import com.jakewharton.rxbinding2.view.RxView
 import com.nsnik.nrs.mydictionary.R
 import com.nsnik.nrs.mydictionary.model.DictionaryEntity
 import com.nsnik.nrs.mydictionary.viewModel.DictionaryViewModel
+import com.twitter.serial.stream.bytebuffer.ByteBufferSerial
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_add_new_word_dialog.*
-import timber.log.Timber
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -46,6 +47,20 @@ class AddNewWordDialogFragment : DialogFragment() {
 
     private lateinit var dictionaryViewModel: DictionaryViewModel
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private var dictionaryEntity: DictionaryEntity? = null
+    private lateinit var thisDialog: Dialog
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.dialogWithTitle)
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        thisDialog = super.onCreateDialog(savedInstanceState)
+        val title = activity?.resources?.getString(R.string.newEntryDialogTitle)
+        thisDialog.setTitle(Html.fromHtml("<font color='#F7AA33'>$title</font>", Html.FROM_HTML_MODE_LEGACY))
+        return thisDialog
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_add_new_word_dialog, container, false)
@@ -59,61 +74,61 @@ class AddNewWordDialogFragment : DialogFragment() {
 
     private fun initialize() {
         dictionaryViewModel = ViewModelProviders.of(this).get(DictionaryViewModel::class.java)
+        dictionaryEntity = ByteBufferSerial().fromByteArray(arguments?.getByteArray(activity?.resources?.getString(R.string.bundleDictionaryEntity)), DictionaryEntity.SERIALIZER)
+        if (dictionaryEntity != null) setValues()
+    }
+
+    private fun setValues() {
+        newEntryWord.setText(dictionaryEntity?.word)
+        newEntryMeaning.setText(dictionaryEntity?.meaning)
+        newEntryAdd.text = activity?.resources?.getString(R.string.update)
+        val title = activity?.resources?.getString(R.string.newEntryDialogUpdateTitle)
+        thisDialog.setTitle(Html.fromHtml("<font color='#F7AA33'>$title</font>", Html.FROM_HTML_MODE_LEGACY))
     }
 
     private fun listeners() {
         compositeDisposable.addAll(
-                RxView.clicks(newEntryAdd).subscribe { insertLocalAndRemoteStub(getWord()) },
+                RxView.clicks(newEntryAdd).subscribe {
+                    if (isValid()) {
+                        if (dictionaryEntity == null) insertLocalAndRemoteStub(getWord(DictionaryEntity()))
+                        else updateLocalAndRemoteStub(getWord(dictionaryEntity!!))
+                    }
+                },
                 RxView.clicks(newEntryCancel).subscribe { dismiss() }
         )
     }
 
+    private fun isValid(): Boolean = checkEmpty(newEntryWord, activity?.resources?.getString(R.string.errorNoWord)) &&
+            checkEmpty(newEntryMeaning, activity?.resources?.getString(R.string.errorNoMeaning))
+
+
+    private fun checkEmpty(textInputEditText: TextInputEditText, errorMessage: String?): Boolean {
+        if (textInputEditText.text.toString().isEmpty()) {
+            textInputEditText.error = errorMessage
+            return false
+        }
+        return true
+    }
+
+    //TODO REPLACE WITH WORK MANAGER
+    private fun updateLocalAndRemoteStub(dictionaryEntity: DictionaryEntity) {
+        dictionaryViewModel.updateLocal(listOf(dictionaryEntity))
+        dictionaryViewModel.updateRemote(dictionaryEntity)
+        dismiss()
+    }
+
+    //TODO REPLACE WITH WORK MANAGER
     private fun insertLocalAndRemoteStub(dictionaryEntity: DictionaryEntity) {
         dictionaryViewModel.insertLocal(listOf(dictionaryEntity))
         dictionaryViewModel.insertRemote(dictionaryEntity)
         dismiss()
     }
 
-    private fun insertLocalAndRemote(dictionaryEntity: DictionaryEntity) {
-        val workManager: WorkManager = WorkManager.getInstance()
-
-        val constraint = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build()
-
-        val insertLocalWork = OneTimeWorkRequest.Builder(InsertWordLocalWork::class.java).build()
-
-        val insertRemoteWork = OneTimeWorkRequest.Builder(InsertWordRemoteWork::class.java)
-                .setConstraints(constraint)
-                .build()
-
-        workManager.beginWith(insertLocalWork)
-                .then(insertRemoteWork)
-                .enqueue()
-
-        val status = workManager.getStatusById(insertRemoteWork.id)
-                .observe(this, androidx.lifecycle.Observer {
-                    if (it != null && it.state.isFinished) {
-                        //INSERT INTO REMOTE DATABASE COMPLETE
-                    }
-                })
-    }
-
-    private fun getWord(): DictionaryEntity {
-        val dictionaryEntity = DictionaryEntity()
+    private fun getWord(dictionaryEntity: DictionaryEntity): DictionaryEntity {
         dictionaryEntity.word = newEntryWord.text.toString()
         dictionaryEntity.meaning = newEntryMeaning.text.toString()
-        dictionaryEntity.dateModified = getDate()
+        dictionaryEntity.dateModified = Calendar.getInstance().timeInMillis
         return dictionaryEntity
-    }
-
-
-    private fun getDate(): Date {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSSX", Locale.ENGLISH)
-        val stringDate = dateFormat.format(Calendar.getInstance().time)
-        Timber.d(stringDate)
-        Timber.d(dateFormat.parse(stringDate).toString())
-        return dateFormat.parse(stringDate)
     }
 
     private fun cleanUp() {
@@ -132,24 +147,6 @@ class AddNewWordDialogFragment : DialogFragment() {
     override fun onDestroy() {
         super.onDestroy()
         cleanUp()
-    }
-
-    inner class InsertWordLocalWork : Worker() {
-
-        override fun doWork(): Worker.Result {
-            dictionaryViewModel.insertLocal(listOf(getWord()))
-            return Worker.Result.SUCCESS
-        }
-
-    }
-
-    inner class InsertWordRemoteWork : Worker() {
-
-        override fun doWork(): Result {
-            dictionaryViewModel.insertRemote(getWord())
-            return Result.SUCCESS
-        }
-
     }
 
 }

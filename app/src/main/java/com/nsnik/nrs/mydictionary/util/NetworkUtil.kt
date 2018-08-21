@@ -60,7 +60,7 @@ class NetworkUtil @Inject constructor(private val retrofit: Retrofit) {
 
     fun insertWord(dictionaryEntity: DictionaryEntity) {
         retrofit.create(DictionaryNetwrokApi::class.java)
-                .addWord(dictionaryEntity.word, dictionaryEntity.meaning)
+                .addWord(dictionaryEntity.word, dictionaryEntity.meaning, dictionaryEntity.dateModified)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : SingleObserver<String> {

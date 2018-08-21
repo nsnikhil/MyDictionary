@@ -26,17 +26,14 @@ package com.nsnik.nrs.mydictionary.model
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
 import com.google.gson.annotations.SerializedName
-import com.twitter.serial.serializer.CoreSerializers
 import com.twitter.serial.serializer.ObjectSerializer
 import com.twitter.serial.serializer.SerializationContext
 import com.twitter.serial.stream.SerializerInput
 import com.twitter.serial.stream.SerializerOutput
-import java.util.*
 
 @Entity
-class DictionaryEntity{
+class DictionaryEntity {
 
     @PrimaryKey(autoGenerate = true)
     @SerializedName("id")
@@ -45,22 +42,21 @@ class DictionaryEntity{
     var word: String? = null
     @SerializedName("meaning")
     var meaning: String? = null
-    @TypeConverters(DateConverter::class)
     @SerializedName("modifieddate")
-    var dateModified: Date? = null
+    var dateModified: Long = 0L
 
     companion object {
 
         @Ignore
         val SERIALIZER: ObjectSerializer<DictionaryEntity> = DictionaryEntitySerializer()
 
-        class DictionaryEntitySerializer: ObjectSerializer<DictionaryEntity>(){
+        class DictionaryEntitySerializer : ObjectSerializer<DictionaryEntity>() {
 
             override fun serializeObject(context: SerializationContext, output: SerializerOutput<out SerializerOutput<*>>, dictionaryEntity: DictionaryEntity) {
                 output.writeInt(dictionaryEntity.id)
                 output.writeString(dictionaryEntity.word)
                 output.writeString(dictionaryEntity.meaning)
-                output.writeObject(SerializationContext.ALWAYS_RELEASE, dictionaryEntity.dateModified, CoreSerializers.DATE)
+                output.writeLong(dictionaryEntity.dateModified)
             }
 
             override fun deserializeObject(context: SerializationContext, input: SerializerInput, versionNumber: Int): DictionaryEntity? {
@@ -68,7 +64,7 @@ class DictionaryEntity{
                 dictionaryEntity.id = input.readInt()
                 dictionaryEntity.word = input.readString()
                 dictionaryEntity.meaning = input.readString()
-                dictionaryEntity.dateModified = input.readObject(SerializationContext.ALWAYS_RELEASE, CoreSerializers.DATE)
+                dictionaryEntity.dateModified = input.readLong()
                 return dictionaryEntity
             }
 

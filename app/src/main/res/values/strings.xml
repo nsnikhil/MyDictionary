@@ -23,6 +23,20 @@
 
 <resources>
     <string name="app_name">My Dictionary</string>
+    <string name="warning">Warning</string>
+    <string name="cancel">Cancel</string>
+    <string name="update">Update</string>
+
+    <!-- DELETE WORD-->
+    <string name="deleteMessage">Are you sure you want to delete this word ?</string>
+    <string name="delete">Delete</string>
+    <!-- -->
+
+
+    <!-- ERROR MESSAGE-->
+    <string name="errorNoWord">Enter a word</string>
+    <string name="errorNoMeaning">Enter a meaning of the word</string>
+    <!-- -->
 
     <!-- MENU STRING -->
     <string name="menuListSearch">Search</string>
@@ -46,10 +60,16 @@
     <string name="aboutSourceCode" translatable="false">The source code is available on <a href="https://github.com/nsnikhil/MyDictionary">Github</a></string>
 
     <!-- NEW ENTRY DIALOG -->
+    <string name="newEntryDialogTitle">Add Word</string>
+    <string name="newEntryDialogUpdateTitle">Edit Word</string>
     <string name="newEntryWordHint">Word</string>
     <string name="newEntryMeaningHint">Meaning</string>
     <string name="newEntryCancel">Cancel</string>
     <string name="newEntryAdd">Add</string>
+    <!-- -->
+
+    <!-- BUNDLE KEY-->
+    <string name="bundleDictionaryEntity">bundleDictionaryEntity</string>
     <!-- -->
 
 </resources>

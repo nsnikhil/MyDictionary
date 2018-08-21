@@ -21,21 +21,31 @@
  * <http://www.gnu.org/philosophy/why-not-lgpl.html>.
  */
 
-package com.nsnik.nrs.mydictionary.model
+package com.nsnik.nrs.mydictionary.views.fragments.dialog
 
-import androidx.room.TypeConverter
-import java.util.*
+import android.content.Context
+import android.content.DialogInterface
+import android.text.Html
+import androidx.appcompat.app.AlertDialog
 
-class DateConverter {
+class ActionAlertDialog {
 
-    @TypeConverter
-    fun longToDate(date: Long?): Date? {
-        return if (date == null) null else Date(date)
-    }
+    companion object {
 
-    @TypeConverter
-    fun dateToLong(date: Date?): Long? {
-        return date?.time
+        fun showDialog(context: Context,
+                       title: String,
+                       message: String,
+                       positive: String,
+                       negative: String,
+                       positiveListener: DialogInterface.OnClickListener,
+                       negativeListener: DialogInterface.OnClickListener) {
+            val dialog = AlertDialog.Builder(context)
+                    .setTitle(Html.fromHtml("<font color='#D32F2F'>$title</font>", Html.FROM_HTML_MODE_LEGACY))
+                    .setMessage(message)
+                    .setPositiveButton(positive, positiveListener)
+                    .setNegativeButton(negative, negativeListener)
+            dialog.create().show()
+        }
     }
 
 }

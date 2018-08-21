@@ -29,7 +29,6 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
-import java.util.*
 
 interface DictionaryNetwrokApi {
 
@@ -39,14 +38,15 @@ interface DictionaryNetwrokApi {
     @FormUrlEncoded
     @POST("/php/insert.php")
     fun addWord(@Field("word") word: String?,
-                @Field("meaning") meaning: String?): Single<String>
+                @Field("meaning") meaning: String?,
+                @Field("modifieddate") modifieddate: Long?): Single<String>
 
     @FormUrlEncoded
     @POST("/php/update.php")
     fun updateWord(@Field("id") id: Int?,
                    @Field("word") word: String?,
                    @Field("meaning") meaning: String?,
-                   @Field("modifieddate") modifieddate: Date?): Single<String>
+                   @Field("modifieddate") modifieddate: Long?): Single<String>
 
     @FormUrlEncoded
     @POST("/php/delete.php")

@@ -26,8 +26,10 @@ package com.nsnik.nrs.mydictionary.views.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -44,14 +46,15 @@ import com.nsnik.nrs.mydictionary.viewModel.DictionaryViewModel
 import com.nsnik.nrs.mydictionary.views.MainActivity
 import com.nsnik.nrs.mydictionary.views.adapters.DictionaryListAdapter
 import com.nsnik.nrs.mydictionary.views.fragments.dialog.AboutDialogFragment
+import com.nsnik.nrs.mydictionary.views.fragments.dialog.ActionAlertDialog
 import com.nsnik.nrs.mydictionary.views.fragments.dialog.AddNewWordDialogFragment
 import com.nsnik.nrs.mydictionary.views.listeners.ItemClickListener
 import com.nsnik.nrs.mydictionary.views.listeners.ItemLongClickListener
+import com.twitter.serial.stream.bytebuffer.ByteBufferSerial
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_dictionary_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import timber.log.Timber
 
 
 class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListener {
@@ -97,6 +100,7 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menuListSearch -> {
+
             }
             R.id.menuListSettings -> Navigation.findNavController(activity as MainActivity, R.id.mainNavHost).navigate(R.id.listToPreferences)
             R.id.menuListAbout -> AboutDialogFragment().show(fragmentManager, "aboutDialog")
@@ -105,7 +109,11 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
     }
 
     override fun itemClicked(dictionaryEntity: DictionaryEntity) {
-
+        AlertDialog.Builder(activity as Context)
+                .setTitle(dictionaryEntity.word)
+                .setMessage(dictionaryEntity.meaning)
+                .create()
+                .show()
     }
 
     override fun itemLongClicked(dictionaryEntity: DictionaryEntity, view: View) {
@@ -118,15 +126,33 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
         popupMenu.inflate(R.menu.item_popup_menu)
         RxPopupMenu.itemClicks(popupMenu).subscribe {
             when (it.itemId) {
-                R.id.popUpMenuEdit -> {
-                    Timber.d("Edit")
-                }
-                R.id.popUpMenuDelete -> {
-                    Timber.d("Delete")
-                }
+                R.id.popUpMenuEdit -> showAddNewWordDialogFragment(dictionaryEntity)
+                R.id.popUpMenuDelete -> showWarningDeleteDialog(dictionaryEntity)
             }
         }
         popupMenu.show()
+    }
+
+    private fun showAddNewWordDialogFragment(dictionaryEntity: DictionaryEntity) {
+        val bundle = Bundle()
+        val byteArray = ByteBufferSerial().toByteArray(dictionaryEntity, DictionaryEntity.SERIALIZER)
+        bundle.putByteArray(activity?.resources?.getString(R.string.bundleDictionaryEntity), byteArray)
+        val dialog = AddNewWordDialogFragment()
+        dialog.arguments = bundle
+        dialog.show(fragmentManager, "editDialog")
+    }
+
+    //TODO REPLACE WITH WORK MANAGER
+    private fun showWarningDeleteDialog(dictionaryEntity: DictionaryEntity) {
+        ActionAlertDialog.showDialog(activity!!, activity?.resources?.getString(R.string.warning)!!,
+                activity?.resources?.getString(R.string.deleteMessage)!!,
+                activity?.resources?.getString(R.string.delete)!!,
+                activity?.resources?.getString(R.string.cancel)!!,
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dictionaryViewModel.deleteLocal(listOf(dictionaryEntity))
+                    dictionaryViewModel.deleteRemote(dictionaryEntity.id)
+                },
+                DialogInterface.OnClickListener { dialogInterface, i -> })
     }
 
     override fun onStart() {

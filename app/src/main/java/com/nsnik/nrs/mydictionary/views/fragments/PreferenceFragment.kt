@@ -25,6 +25,7 @@ package com.nsnik.nrs.mydictionary.views.fragments
 
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.preference.PreferenceFragmentCompat
 import com.nsnik.nrs.mydictionary.R
 
@@ -32,8 +33,8 @@ import com.nsnik.nrs.mydictionary.R
 class PreferenceFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        Toast.makeText(activity, "TODO", Toast.LENGTH_LONG).show()
         addPreferencesFromResource(R.xml.preference)
     }
-
 
 }

@@ -23,13 +23,15 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#FAFAFA</color>
-    <color name="colorPrimaryLight">#FFFFFF</color>
-    <color name="colorPrimaryDark">#F5F5F5</color>
+    <color name="colorPrimary">#344955</color>
+    <color name="colorPrimaryLight">#4A6572</color>
+    <color name="colorPrimaryDark">#232F34</color>
+
+    <color name="white">#FFFFFF</color>
 
     <color name="colorSecondary">#212121</color>
     <color name="colorSecondaryLight">#424242</color>
     <color name="colorSecondaryDark">#000000</color>
 
-    <color name="colorAccent">#212121</color>
+    <color name="colorAccent">#F7AA33</color>
 </resources>
