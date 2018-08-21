@@ -30,12 +30,14 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dictionaryList"
         style="@style/matchParent"
+        android:clipToPadding="false"
+        android:paddingBottom="88dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        style="@style/wrapContent"
         android:id="@+id/addWord"
+        style="@style/wrapContent"
         android:layout_margin="@dimen/sixteen"
         android:src="@drawable/ic_outline_add_24px"
         app:fabSize="normal"

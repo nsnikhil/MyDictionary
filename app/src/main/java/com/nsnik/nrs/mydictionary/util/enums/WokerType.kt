@@ -21,26 +21,13 @@
  * <http://www.gnu.org/philosophy/why-not-lgpl.html>.
  */
 
-package com.nsnik.nrs.mydictionary.model
+package com.nsnik.nrs.mydictionary.util.enums
 
-import androidx.lifecycle.LiveData
-import androidx.room.*
-
-@Dao
-interface DictionaryDao {
-
-    @Query("SELECT * FROM DictionaryEntity")
-    fun getWordList(): LiveData<List<DictionaryEntity>>
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertWords(dictionaryEntity: List<DictionaryEntity>): LongArray
-
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun updateWords(dictionaryEntity: List<DictionaryEntity>): Int
-
-    @Delete
-    fun deleteWord(dictionaryEntity: List<DictionaryEntity>)
-
-    @Query("DELETE FROM DictionaryEntity WHERE id NOT IN (:ids)")
-    fun deleteObsoleteData(ids: List<Int>)
+enum class WokerType {
+    INSERT_LOCAL,
+    INSERT_REMOTE,
+    UPDATE_LOCAL,
+    UPDATE_REMOTE,
+    DELETE_LOCAL,
+    DELETE_REMOTE
 }

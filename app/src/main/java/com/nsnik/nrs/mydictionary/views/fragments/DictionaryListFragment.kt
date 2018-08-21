@@ -27,6 +27,8 @@ package com.nsnik.nrs.mydictionary.views.fragments
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AlertDialog
@@ -37,11 +39,17 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.jakewharton.rxbinding2.support.v7.widget.RxPopupMenu
 import com.jakewharton.rxbinding2.view.RxView
 import com.nsnik.nrs.mydictionary.R
 import com.nsnik.nrs.mydictionary.model.DictionaryEntity
 import com.nsnik.nrs.mydictionary.util.eventBus.WordListDownloaded
+import com.nsnik.nrs.mydictionary.util.worker.DeleteLocalWorker
+import com.nsnik.nrs.mydictionary.util.worker.DeleteRemoteWorker
+import com.nsnik.nrs.mydictionary.util.worker.WorkerUtil
 import com.nsnik.nrs.mydictionary.viewModel.DictionaryViewModel
 import com.nsnik.nrs.mydictionary.views.MainActivity
 import com.nsnik.nrs.mydictionary.views.adapters.DictionaryListAdapter
@@ -55,6 +63,7 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_dictionary_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import java.util.stream.Collectors
 
 
 class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListener {
@@ -81,9 +90,8 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
             layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
             adapter = dictionaryListAdapter
         }
-
         dictionaryViewModel = ViewModelProviders.of(this).get(DictionaryViewModel::class.java)
-        dictionaryViewModel.getRemoteList()
+        if (checkConnection()) dictionaryViewModel.getRemoteList()
         dictionaryViewModel.getLocalList().observe(this, Observer { dictionaryListAdapter.submitList(it) })
     }
 
@@ -133,6 +141,12 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
         popupMenu.show()
     }
 
+    private fun checkConnection(): Boolean {
+        val cm = activity?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+        val activeNetwork: NetworkInfo? = cm?.activeNetworkInfo
+        return activeNetwork?.isConnected == true
+    }
+
     private fun showAddNewWordDialogFragment(dictionaryEntity: DictionaryEntity) {
         val bundle = Bundle()
         val byteArray = ByteBufferSerial().toByteArray(dictionaryEntity, DictionaryEntity.SERIALIZER)
@@ -142,17 +156,45 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
         dialog.show(fragmentManager, "editDialog")
     }
 
-    //TODO REPLACE WITH WORK MANAGER
     private fun showWarningDeleteDialog(dictionaryEntity: DictionaryEntity) {
         ActionAlertDialog.showDialog(activity!!, activity?.resources?.getString(R.string.warning)!!,
                 activity?.resources?.getString(R.string.deleteMessage)!!,
                 activity?.resources?.getString(R.string.delete)!!,
                 activity?.resources?.getString(R.string.cancel)!!,
                 DialogInterface.OnClickListener { dialogInterface, i ->
-                    dictionaryViewModel.deleteLocal(listOf(dictionaryEntity))
-                    dictionaryViewModel.deleteRemote(dictionaryEntity.id)
+                    localAndRemoteAction(
+                            WorkerUtil.buildLocalRequest(
+                                    getEntityData(dictionaryEntity),
+                                    DeleteLocalWorker::class.java),
+                            WorkerUtil.buildRemoteRequest(
+                                    Data.Builder().putInt("id", dictionaryEntity.id).build(),
+                                    WorkerUtil.getConstraints(),
+                                    DeleteRemoteWorker::class.java)
+                    )
                 },
                 DialogInterface.OnClickListener { dialogInterface, i -> })
+    }
+
+    private fun getEntityData(dictionaryEntity: DictionaryEntity): Data = Data.Builder()
+            .putInt("id", dictionaryEntity.id)
+            .putString("word", dictionaryEntity.word)
+            .putString("meaning", dictionaryEntity.meaning)
+            .putLong("time", dictionaryEntity.dateModified)
+            .build()
+
+
+    //TODO SHIFT TO UTILITY CLASS
+    private fun localAndRemoteAction(localRequest: OneTimeWorkRequest, remoteRequest: OneTimeWorkRequest) {
+        val workManager: WorkManager = WorkManager.getInstance()
+        workManager.beginWith(localRequest)
+                .then(remoteRequest)
+                .enqueue()
+        val status = workManager.getStatusById(remoteRequest.id)
+                .observe(this, androidx.lifecycle.Observer {
+                    if (it != null && it.state.isFinished) {
+                        //DELETE FROM DATABASE COMPLETE
+                    }
+                })
     }
 
     override fun onStart() {
@@ -168,6 +210,7 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
     @Subscribe
     fun WordListDownloadedEvent(wordListDownloaded: WordListDownloaded) {
         dictionaryViewModel.insertLocal(wordListDownloaded.wordList)
+        dictionaryViewModel.deleteObsoleteData(wordListDownloaded.wordList.stream().map(DictionaryEntity::id).collect(Collectors.toList()))
     }
 
     private fun cleanUp() {

@@ -23,13 +23,36 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <PreferenceCategory android:title="@string/preferenceCategoryInterface">
+
+        <SwitchPreference
+            android:checked="false"
+            android:enabled="false"
+            android:key="@string/preferenceDarkModeKey"
+            android:summary="@string/preferenceDarkModeSummary"
+            android:title="@string/preferenceDarkModeTitle" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/preferenceCategoryData">
+
+        <CheckBoxPreference
+            android:checked="false"
+            android:enabled="false"
+            android:key="@string/preferenceBackGroundSyncKey"
+            android:summary="@string/preferenceBackGroundSyncSummary"
+            android:title="@string/preferenceBackGroundSyncTitle" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/preferenceCategoryGeneral">
 
-
         <ListPreference
+            android:enabled="false"
             android:entries="@array/preferenceSortByEntries"
             android:entryValues="@array/preferenceSortByEntries"
             android:key="@string/preferenceSortByKey"
+            android:summary="@string/preferenceSortBySummary"
             android:title="@string/preferenceSortByTitle" />
 
     </PreferenceCategory>

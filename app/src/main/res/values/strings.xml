@@ -74,9 +74,19 @@
 
 
     <!-- PREFERENCES-->
-    <string name="preferenceCategoryGeneral">General</string>
+    <string name="preferenceCategoryInterface">Interface</string>
+    <string name="preferenceDarkModeTitle">Dark Mode</string>
+    <string name="preferenceDarkModeSummary">Disabled</string>
+    <string name="preferenceDarkModeKey">darkModeKey</string>
 
+    <string name="preferenceCategoryData">Data</string>
+    <string name="preferenceBackGroundSyncTitle">Background Sync</string>
+    <string name="preferenceBackGroundSyncSummary">Disabled</string>
+    <string name="preferenceBackGroundSyncKey">backGroundSyncKey</string>
+
+    <string name="preferenceCategoryGeneral">General</string>
     <string name="preferenceSortByTitle">Sort By</string>
+    <string name="preferenceSortBySummary">Disabled</string>
     <string name="preferenceSortByKey">sortByKey</string>
     <string-array name="preferenceSortByEntries">
         <item>Date</item>

@@ -23,9 +23,6 @@
 
 package com.nsnik.nrs.mydictionary.views
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.os.Bundle
 import androidx.annotation.NonNull
 import androidx.annotation.VisibleForTesting
@@ -52,12 +49,6 @@ class MainActivity : AppCompatActivity() {
     private fun initialize() {
         setSupportActionBar(mainToolbar)
         NavigationUI.setupWithNavController(mainToolbar, findNavController(this, R.id.mainNavHost))
-    }
-
-    private fun checkConnection(): Boolean {
-        val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-        val activeNetwork: NetworkInfo? = cm?.activeNetworkInfo
-        return activeNetwork?.isConnected == true
     }
 
     override fun onSupportNavigateUp() = findNavController(this, R.id.mainNavHost).navigateUp()

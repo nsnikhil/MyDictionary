@@ -21,26 +21,15 @@
  * <http://www.gnu.org/philosophy/why-not-lgpl.html>.
  */
 
-package com.nsnik.nrs.mydictionary.model
+package com.nsnik.nrs.mydictionary.util.worker
 
-import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.work.Worker
+import com.nsnik.nrs.mydictionary.MyApplication
 
-@Dao
-interface DictionaryDao {
+class InsertRemoteWork : Worker() {
 
-    @Query("SELECT * FROM DictionaryEntity")
-    fun getWordList(): LiveData<List<DictionaryEntity>>
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertWords(dictionaryEntity: List<DictionaryEntity>): LongArray
-
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun updateWords(dictionaryEntity: List<DictionaryEntity>): Int
-
-    @Delete
-    fun deleteWord(dictionaryEntity: List<DictionaryEntity>)
-
-    @Query("DELETE FROM DictionaryEntity WHERE id NOT IN (:ids)")
-    fun deleteObsoleteData(ids: List<Int>)
+    override fun doWork(): Result {
+        (applicationContext as MyApplication).networkUtil.insertWord(WorkerUtil.getWord(inputData))
+        return Result.SUCCESS
+    }
 }

@@ -52,6 +52,10 @@ class DictionaryViewModel(application: Application) : AndroidViewModel(applicati
         dbUtil.deleteWord(dictionaryEntity)
     }
 
+    fun deleteObsoleteData(ids: List<Int>) {
+        dbUtil.deleteObsoleteData(ids)
+    }
+
     fun getRemoteList() {
         netwrokUtil.getWordList()
     }

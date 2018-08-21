@@ -32,10 +32,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.work.*
 import com.google.android.material.textfield.TextInputEditText
 import com.jakewharton.rxbinding2.view.RxView
 import com.nsnik.nrs.mydictionary.R
 import com.nsnik.nrs.mydictionary.model.DictionaryEntity
+import com.nsnik.nrs.mydictionary.util.worker.InsertLocalWork
+import com.nsnik.nrs.mydictionary.util.worker.InsertRemoteWork
+import com.nsnik.nrs.mydictionary.util.worker.UpdateLocalWorker
+import com.nsnik.nrs.mydictionary.util.worker.UpdateRemoteWorker
 import com.nsnik.nrs.mydictionary.viewModel.DictionaryViewModel
 import com.twitter.serial.stream.bytebuffer.ByteBufferSerial
 import io.reactivex.disposables.CompositeDisposable
@@ -57,8 +62,7 @@ class AddNewWordDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         thisDialog = super.onCreateDialog(savedInstanceState)
-        val title = activity?.resources?.getString(R.string.newEntryDialogTitle)
-        thisDialog.setTitle(Html.fromHtml("<font color='#F7AA33'>$title</font>", Html.FROM_HTML_MODE_LEGACY))
+        thisDialog.setTitle(getFormattedText(activity?.resources?.getString(R.string.newEntryDialogTitle)))
         return thisDialog
     }
 
@@ -78,20 +82,30 @@ class AddNewWordDialogFragment : DialogFragment() {
         if (dictionaryEntity != null) setValues()
     }
 
+
     private fun setValues() {
         newEntryWord.setText(dictionaryEntity?.word)
         newEntryMeaning.setText(dictionaryEntity?.meaning)
         newEntryAdd.text = activity?.resources?.getString(R.string.update)
-        val title = activity?.resources?.getString(R.string.newEntryDialogUpdateTitle)
-        thisDialog.setTitle(Html.fromHtml("<font color='#F7AA33'>$title</font>", Html.FROM_HTML_MODE_LEGACY))
+        thisDialog.setTitle(getFormattedText(activity?.resources?.getString(R.string.newEntryDialogUpdateTitle)))
     }
+
+    private fun getFormattedText(text: String?) = Html.fromHtml("<font color='#344955'>$text</font>", Html.FROM_HTML_MODE_LEGACY)
 
     private fun listeners() {
         compositeDisposable.addAll(
                 RxView.clicks(newEntryAdd).subscribe {
                     if (isValid()) {
-                        if (dictionaryEntity == null) insertLocalAndRemoteStub(getWord(DictionaryEntity()))
-                        else updateLocalAndRemoteStub(getWord(dictionaryEntity!!))
+                        if (dictionaryEntity == null) {
+                            localAndRemoteAction(
+                                    buildLocalRequest(getNewData(), InsertLocalWork::class.java),
+                                    buildRemoteRequest(getNewData(), getConstraints(), InsertRemoteWork::class.java))
+                        } else {
+                            localAndRemoteAction(
+                                    buildLocalRequest(getEntityData(), UpdateLocalWorker::class.java),
+                                    buildRemoteRequest(getEntityData(), getConstraints(), UpdateRemoteWorker::class.java)
+                            )
+                        }
                     }
                 },
                 RxView.clicks(newEntryCancel).subscribe { dismiss() }
@@ -110,26 +124,47 @@ class AddNewWordDialogFragment : DialogFragment() {
         return true
     }
 
-    //TODO REPLACE WITH WORK MANAGER
-    private fun updateLocalAndRemoteStub(dictionaryEntity: DictionaryEntity) {
-        dictionaryViewModel.updateLocal(listOf(dictionaryEntity))
-        dictionaryViewModel.updateRemote(dictionaryEntity)
-        dismiss()
+    //TODO SHIFT TO UTILITY CLASS
+    private fun localAndRemoteAction(localRequest: OneTimeWorkRequest, remoteRequest: OneTimeWorkRequest) {
+        val workManager: WorkManager = WorkManager.getInstance()
+        workManager.beginWith(localRequest)
+                .then(remoteRequest)
+                .enqueue()
+        val status = workManager.getStatusById(remoteRequest.id)
+                .observe(this, androidx.lifecycle.Observer {
+                    if (it != null && it.state.isFinished) {
+                        //DELETE FROM DATABASE COMPLETE
+                    }
+                })
+
     }
 
-    //TODO REPLACE WITH WORK MANAGER
-    private fun insertLocalAndRemoteStub(dictionaryEntity: DictionaryEntity) {
-        dictionaryViewModel.insertLocal(listOf(dictionaryEntity))
-        dictionaryViewModel.insertRemote(dictionaryEntity)
-        dismiss()
-    }
+    private fun getConstraints(): Constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
 
-    private fun getWord(dictionaryEntity: DictionaryEntity): DictionaryEntity {
-        dictionaryEntity.word = newEntryWord.text.toString()
-        dictionaryEntity.meaning = newEntryMeaning.text.toString()
-        dictionaryEntity.dateModified = Calendar.getInstance().timeInMillis
-        return dictionaryEntity
-    }
+    private fun getNewData(): Data = Data.Builder()
+            .putString("word", newEntryWord.text.toString())
+            .putString("meaning", newEntryMeaning.text.toString())
+            .putLong("time", Calendar.getInstance().timeInMillis)
+            .build()
+
+    private fun getEntityData(): Data = Data.Builder()
+            .putInt("id", dictionaryEntity?.id!!)
+            .putString("word", newEntryWord.text.toString())
+            .putString("meaning", newEntryMeaning.text.toString())
+            .putLong("time", Calendar.getInstance().timeInMillis)
+            .build()
+
+    private fun buildLocalRequest(data: Data, workerClass: Class<out Worker>): OneTimeWorkRequest = OneTimeWorkRequest.Builder(workerClass)
+            .setInputData(data)
+            .build()
+
+    private fun buildRemoteRequest(data: Data, constraints: Constraints, workerClass: Class<out Worker>): OneTimeWorkRequest =
+            OneTimeWorkRequest.Builder(workerClass)
+                    .setConstraints(constraints)
+                    .setInputData(data)
+                    .build()
 
     private fun cleanUp() {
         compositeDisposable.clear()

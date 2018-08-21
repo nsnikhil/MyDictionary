@@ -105,4 +105,24 @@ class DbUtil @Inject constructor(private val dictionaryDatabase: DictionaryDatab
         })
     }
 
+    fun deleteObsoleteData(ids: List<Int>) {
+        val completable = Completable.fromCallable { dictionaryDatabase.dictionaryDao.deleteObsoleteData(ids) }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+        completable.subscribe(object : CompletableObserver {
+            override fun onComplete() {
+                Timber.d("Deletion successful")
+            }
+
+            override fun onSubscribe(d: Disposable) {
+
+            }
+
+            override fun onError(e: Throwable) {
+                Timber.d(e)
+            }
+
+        })
+    }
+
 }
