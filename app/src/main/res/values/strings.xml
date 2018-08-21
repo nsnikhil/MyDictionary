@@ -72,5 +72,17 @@
     <string name="bundleDictionaryEntity">bundleDictionaryEntity</string>
     <!-- -->
 
+
+    <!-- PREFERENCES-->
+    <string name="preferenceCategoryGeneral">General</string>
+
+    <string name="preferenceSortByTitle">Sort By</string>
+    <string name="preferenceSortByKey">sortByKey</string>
+    <string-array name="preferenceSortByEntries">
+        <item>Date</item>
+        <item>Alphabetically</item>
+    </string-array>
+    <!-- -->
+
 </resources>
 

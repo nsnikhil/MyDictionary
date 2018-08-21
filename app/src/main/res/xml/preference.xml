@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~     MyDictionary  Copyright (C) 2018  Nikhil Soni
   ~     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
   ~     This is free software, and you are welcome to redistribute it
@@ -22,6 +21,17 @@
   ~ <http://www.gnu.org/philosophy/why-not-lgpl.html>.
   -->
 
-<PreferenceScreen>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/preferenceCategoryGeneral">
+
+
+        <ListPreference
+            android:entries="@array/preferenceSortByEntries"
+            android:entryValues="@array/preferenceSortByEntries"
+            android:key="@string/preferenceSortByKey"
+            android:title="@string/preferenceSortByTitle" />
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

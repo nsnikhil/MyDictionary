@@ -49,8 +49,8 @@ class DictionaryListAdapter(val itemClickListener: ItemClickListener, val itemLo
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val dictionaryEntity = getItem(position)
-        holder.word.text = dictionaryEntity.word
-        holder.meaning.text = dictionaryEntity.meaning
+        holder.word.text = dictionaryEntity.word?.capitalize()
+        holder.meaning.text = dictionaryEntity.meaning?.capitalize()
     }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

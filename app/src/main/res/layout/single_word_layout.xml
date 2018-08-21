@@ -25,9 +25,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Widget.MaterialComponents.CardView"
     android:layout_width="match_parent"
-    app:cardElevation="1dp"
-    android:layout_height="?listPreferredItemHeight"
-    android:layout_margin="@dimen/eight">
+    android:layout_height="?listPreferredItemHeightLarge"
+    android:layout_margin="@dimen/eight"
+    app:cardElevation="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/itemContainer"
@@ -50,7 +50,11 @@
         <TextView
             android:id="@+id/itemMeaning"
             style="@style/wrapContent"
+            android:layout_marginTop="@dimen/sixteen"
+            android:ellipsize="end"
             android:hint="@string/newEntryMeaningHint"
+            android:maxLines="1"
+            android:singleLine="true"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/itemWord" />

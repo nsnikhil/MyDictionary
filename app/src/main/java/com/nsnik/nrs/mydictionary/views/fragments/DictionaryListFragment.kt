@@ -110,8 +110,8 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
 
     override fun itemClicked(dictionaryEntity: DictionaryEntity) {
         AlertDialog.Builder(activity as Context)
-                .setTitle(dictionaryEntity.word)
-                .setMessage(dictionaryEntity.meaning)
+                .setTitle(dictionaryEntity.word?.capitalize())
+                .setMessage(dictionaryEntity.meaning?.capitalize())
                 .create()
                 .show()
     }
