@@ -34,7 +34,7 @@ import com.nsnik.nrs.mydictionary.util.NetworkUtil
 class DictionaryViewModel(application: Application) : AndroidViewModel(application) {
 
     private val dbUtil: DbUtil = (application as MyApplication).dbUtil
-    private val netwrokUtil: NetworkUtil = (application as MyApplication).networkUtil
+    private val networkUtil: NetworkUtil = (application as MyApplication).networkUtil
 
     fun getLocalList(): LiveData<List<DictionaryEntity>> {
         return dbUtil.getWordList()
@@ -57,19 +57,19 @@ class DictionaryViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun getRemoteList() {
-        netwrokUtil.getWordList()
+        networkUtil.getWordList()
     }
 
     fun insertRemote(vararg dictionaryEntity: DictionaryEntity) {
-        dictionaryEntity.forEach { netwrokUtil.insertWord(it) }
+        dictionaryEntity.forEach { networkUtil.insertWord(it) }
     }
 
     fun updateRemote(vararg dictionaryEntity: DictionaryEntity) {
-        dictionaryEntity.forEach { netwrokUtil.updateWord(it) }
+        dictionaryEntity.forEach { networkUtil.updateWord(it) }
     }
 
     fun deleteRemote(vararg id: Int) {
-        id.forEach { netwrokUtil.deleteWord(it) }
+        id.forEach { networkUtil.deleteWord(it) }
     }
 
 }

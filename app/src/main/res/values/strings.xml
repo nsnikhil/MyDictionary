@@ -36,6 +36,7 @@
     <!-- ERROR MESSAGE-->
     <string name="errorNoWord">Enter a word</string>
     <string name="errorNoMeaning">Enter a meaning of the word</string>
+    <string name="errorNoActivityToHandleChrome">No activity found to launch the task</string>
     <!-- -->
 
     <!-- MENU STRING -->

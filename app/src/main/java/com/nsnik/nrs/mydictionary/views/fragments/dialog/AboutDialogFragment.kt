@@ -31,6 +31,7 @@ import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
@@ -59,20 +60,20 @@ class AboutDialogFragment : DialogFragment() {
         aboutNikhil.movementMethod = LinkMovementMethod.getInstance()
         compositeDisposable.addAll(
                 RxView.clicks(aboutLibraries).subscribe { startActivity(Intent(activity, OssLicensesMenuActivity::class.java)) },
-                RxView.clicks(aboutLicense).subscribe { chromeCustomTab(activity?.resources?.getString(R.string.aboutLicense)) }
+                RxView.clicks(aboutLicense).subscribe { chromeCustomTab(activity?.resources?.getString(R.string.aboutLicenseUrl)) }
         )
     }
 
-    //TODO FIX NO CHROME FOUND
     private fun chromeCustomTab(url: String?) {
-        val builder = CustomTabsIntent.Builder()
-        if (activity != null) {
-            builder.setToolbarColor(ContextCompat.getColor(activity!!, R.color.colorPrimary))
-            builder.setSecondaryToolbarColor(ContextCompat.getColor(activity!!, R.color.colorPrimaryDark))
-            builder.setExitAnimations(activity!!, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-            val customTabsIntent = builder.build()
-            customTabsIntent.launchUrl(activity!!, Uri.parse(url))
-        }
+        val customTabsIntent = CustomTabsIntent.Builder()
+                .addDefaultShareMenuItem()
+                .setToolbarColor(ContextCompat.getColor(activity!!, R.color.colorPrimary))
+                .setSecondaryToolbarColor(ContextCompat.getColor(activity!!, R.color.colorPrimaryDark))
+                .setExitAnimations(activity!!, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                .setShowTitle(true)
+                .build()
+        if (customTabsIntent.intent.resolveActivity(activity?.packageManager!!) != null) customTabsIntent.launchUrl(activity, Uri.parse(url))
+        else Toast.makeText(activity, "", Toast.LENGTH_LONG).show()
     }
 
     override fun onResume() {

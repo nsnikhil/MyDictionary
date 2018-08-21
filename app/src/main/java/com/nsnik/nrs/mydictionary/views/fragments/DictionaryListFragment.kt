@@ -25,6 +25,7 @@ package com.nsnik.nrs.mydictionary.views.fragments
 
 
 import android.annotation.SuppressLint
+import android.app.SearchManager
 import android.content.Context
 import android.content.DialogInterface
 import android.net.ConnectivityManager
@@ -33,6 +34,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -63,6 +65,7 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_dictionary_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import timber.log.Timber
 import java.util.stream.Collectors
 
 
@@ -70,6 +73,8 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
 
     private lateinit var dictionaryListAdapter: DictionaryListAdapter
     private lateinit var dictionaryViewModel: DictionaryViewModel
+    private lateinit var searchView: SearchView
+    private lateinit var searchItem: MenuItem
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -103,12 +108,43 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.list_menu, menu)
+        searchView = menu?.findItem(R.id.menuListSearch)?.actionView as SearchView
+        searchItem = menu.findItem(R.id.menuListSearch)
+        searchView.setSearchableInfo((activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager).getSearchableInfo(activity!!.componentName))
+        menuListener()
+    }
+
+    @SuppressLint("CheckResult")
+    private fun menuListener() {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query!!.isNotEmpty()) {
+                    Timber.d(query)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText!!.isNotEmpty()) {
+                    Timber.d(newText)
+                }
+                return true
+            }
+        })
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(menuItem: MenuItem?): Boolean {
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(menuItem: MenuItem?): Boolean {
+                return true
+            }
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menuListSearch -> {
-
             }
             R.id.menuListSettings -> Navigation.findNavController(activity as MainActivity, R.id.mainNavHost).navigate(R.id.listToPreferences)
             R.id.menuListAbout -> AboutDialogFragment().show(fragmentManager, "aboutDialog")
