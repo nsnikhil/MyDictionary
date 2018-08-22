@@ -35,13 +35,9 @@ class SimpleIdlingResource : IdlingResource {
 
     private val mIsIdleNow = AtomicBoolean(true)
 
-    override fun getName(): String {
-        return this.javaClass.simpleName
-    }
+    override fun getName(): String = this.javaClass.simpleName
 
-    override fun isIdleNow(): Boolean {
-        return mIsIdleNow.get()
-    }
+    override fun isIdleNow(): Boolean = mIsIdleNow.get()
 
     override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback) {
         this.mCallback = callback

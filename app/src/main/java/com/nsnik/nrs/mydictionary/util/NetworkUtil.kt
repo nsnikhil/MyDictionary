@@ -38,84 +38,75 @@ import javax.inject.Inject
 @ApplicationScope
 class NetworkUtil @Inject constructor(private val retrofit: Retrofit) {
 
-    fun getWordList() {
-        retrofit.create(DictionaryNetwrokApi::class.java)
-                .getUserList()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : SingleObserver<List<DictionaryEntity>> {
-                    override fun onSuccess(t: List<DictionaryEntity>) {
-                        EventBus.getDefault().post(WordListDownloaded(t))
-                    }
+    fun getWordList() = retrofit.create(DictionaryNetwrokApi::class.java)
+            .getUserList()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : SingleObserver<List<DictionaryEntity>> {
+                override fun onSuccess(t: List<DictionaryEntity>) {
+                    EventBus.getDefault().post(WordListDownloaded(t))
+                }
 
-                    override fun onSubscribe(d: Disposable) {
+                override fun onSubscribe(d: Disposable) {
 
-                    }
+                }
 
-                    override fun onError(e: Throwable) {
-                        Timber.d(e)
-                    }
-                })
-    }
+                override fun onError(e: Throwable) {
+                    Timber.d(e)
+                }
+            })
 
-    fun insertWord(dictionaryEntity: DictionaryEntity) {
-        retrofit.create(DictionaryNetwrokApi::class.java)
-                .addWord(dictionaryEntity.word, dictionaryEntity.meaning, dictionaryEntity.dateModified)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : SingleObserver<String> {
-                    override fun onSuccess(t: String) {
-                        Timber.d(t)
-                    }
+    fun insertWord(dictionaryEntity: DictionaryEntity) = retrofit.create(DictionaryNetwrokApi::class.java)
+            .addWord(dictionaryEntity.word, dictionaryEntity.meaning, dictionaryEntity.dateModified)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : SingleObserver<String> {
+                override fun onSuccess(t: String) {
+                    Timber.d(t)
+                }
 
-                    override fun onSubscribe(d: Disposable) {
+                override fun onSubscribe(d: Disposable) {
 
-                    }
+                }
 
-                    override fun onError(e: Throwable) {
-                        Timber.d(e)
-                    }
-                })
-    }
+                override fun onError(e: Throwable) {
+                    Timber.d(e)
+                }
+            })
 
-    fun updateWord(dictionaryEntity: DictionaryEntity) {
-        retrofit.create(DictionaryNetwrokApi::class.java)
-                .updateWord(dictionaryEntity.id, dictionaryEntity.word, dictionaryEntity.meaning, dictionaryEntity.dateModified)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : SingleObserver<String> {
-                    override fun onSuccess(t: String) {
-                        Timber.d(t)
-                    }
+    fun updateWord(dictionaryEntity: DictionaryEntity) = retrofit.create(DictionaryNetwrokApi::class.java)
+            .updateWord(dictionaryEntity.id, dictionaryEntity.word, dictionaryEntity.meaning, dictionaryEntity.dateModified)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : SingleObserver<String> {
+                override fun onSuccess(t: String) {
+                    Timber.d(t)
+                }
 
-                    override fun onSubscribe(d: Disposable) {
+                override fun onSubscribe(d: Disposable) {
 
-                    }
+                }
 
-                    override fun onError(e: Throwable) {
-                        Timber.d(e)
-                    }
-                })
-    }
+                override fun onError(e: Throwable) {
+                    Timber.d(e)
+                }
+            })
 
-    fun deleteWord(id: Int) {
-        retrofit.create(DictionaryNetwrokApi::class.java)
-                .deleteWord(id)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : SingleObserver<String> {
-                    override fun onSuccess(t: String) {
-                        Timber.d(t)
-                    }
+    fun deleteWord(id: Int) = retrofit.create(DictionaryNetwrokApi::class.java)
+            .deleteWord(id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : SingleObserver<String> {
+                override fun onSuccess(t: String) {
+                    Timber.d(t)
+                }
 
-                    override fun onSubscribe(d: Disposable) {
+                override fun onSubscribe(d: Disposable) {
 
-                    }
+                }
 
-                    override fun onError(e: Throwable) {
-                        Timber.d(e)
-                    }
-                })
-    }
-
+                override fun onError(e: Throwable) {
+                    Timber.d(e)
+                }
+            })
 }

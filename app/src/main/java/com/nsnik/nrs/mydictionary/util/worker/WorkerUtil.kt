@@ -31,48 +31,37 @@ class WorkerUtil {
 
     companion object {
 
+        fun localAndRemoteAction(localRequest: OneTimeWorkRequest, remoteRequest: OneTimeWorkRequest) = WorkManager.getInstance()
+                .beginWith(localRequest)
+                .then(remoteRequest)
+                .enqueue()
+
         fun buildLocalRequest(data: Data, workerClass: Class<out Worker>): OneTimeWorkRequest = OneTimeWorkRequest.Builder(workerClass)
                 .setInputData(data)
                 .build()
 
-        fun buildRemoteRequest(data: Data, constraints: Constraints, workerClass: Class<out Worker>): OneTimeWorkRequest =
-                OneTimeWorkRequest.Builder(workerClass)
-                        .setConstraints(constraints)
-                        .setInputData(data)
-                        .build()
+        fun buildRemoteRequest(data: Data, constraints: Constraints, workerClass: Class<out Worker>): OneTimeWorkRequest = OneTimeWorkRequest.Builder(workerClass)
+                .setConstraints(constraints)
+                .setInputData(data)
+                .build()
 
         fun getConstraints(): Constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
         fun getWord(inputData: Data): DictionaryEntity = getWord(
-                inputData.getString("word"),
-                inputData.getString("meaning"),
-                inputData.getLong("time", Calendar.getInstance().timeInMillis))
-
-        fun getWordForUpdate(inputData: Data): DictionaryEntity = getWord(
                 inputData.getInt("id", -1),
                 inputData.getString("word"),
                 inputData.getString("meaning"),
                 inputData.getLong("time", Calendar.getInstance().timeInMillis))
 
-        private fun getWord(word: String?, meaning: String?, time: Long): DictionaryEntity {
-            val dictionaryEntity = DictionaryEntity()
-            dictionaryEntity.word = word
-            dictionaryEntity.meaning = meaning
-            dictionaryEntity.dateModified = time
-            return dictionaryEntity
-        }
-
         private fun getWord(id: Int, word: String?, meaning: String?, time: Long): DictionaryEntity {
             val dictionaryEntity = DictionaryEntity()
-            dictionaryEntity.id = id
+            if (id != -1) dictionaryEntity.id = id
             dictionaryEntity.word = word
             dictionaryEntity.meaning = meaning
             dictionaryEntity.dateModified = time
             return dictionaryEntity
         }
-
     }
-
 }

@@ -42,8 +42,6 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.Data
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
 import com.jakewharton.rxbinding2.support.v7.widget.RxPopupMenu
 import com.jakewharton.rxbinding2.view.RxView
 import com.nsnik.nrs.mydictionary.R
@@ -66,7 +64,6 @@ import kotlinx.android.synthetic.main.fragment_dictionary_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
-import java.util.stream.Collectors
 
 
 class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListener {
@@ -100,11 +97,9 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
         dictionaryViewModel.getLocalList().observe(this, Observer { dictionaryListAdapter.submitList(it) })
     }
 
-    private fun listeners() {
-        compositeDisposable.addAll(
-                RxView.clicks(addWord).subscribe { AddNewWordDialogFragment().show(fragmentManager, "newWordDialog") }
-        )
-    }
+    private fun listeners() = compositeDisposable.addAll(
+            RxView.clicks(addWord).subscribe { AddNewWordDialogFragment().show(fragmentManager, "newWordDialog") })
+
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.list_menu, menu)
@@ -118,16 +113,12 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
     private fun menuListener() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                if (query!!.isNotEmpty()) {
-                    Timber.d(query)
-                }
+                if (query!!.isNotEmpty()) Timber.d(query)
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText!!.isNotEmpty()) {
-                    Timber.d(newText)
-                }
+                if (newText!!.isNotEmpty()) Timber.d(newText)
                 return true
             }
         })
@@ -152,17 +143,14 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
         return super.onOptionsItemSelected(item)
     }
 
-    override fun itemClicked(dictionaryEntity: DictionaryEntity) {
-        AlertDialog.Builder(activity as Context)
-                .setTitle(dictionaryEntity.word?.capitalize())
-                .setMessage(dictionaryEntity.meaning?.capitalize())
-                .create()
-                .show()
-    }
+    override fun itemClicked(dictionaryEntity: DictionaryEntity) = AlertDialog.Builder(activity as Context)
+            .setTitle(dictionaryEntity.word?.capitalize())
+            .setMessage(dictionaryEntity.meaning?.capitalize())
+            .create()
+            .show()
 
-    override fun itemLongClicked(dictionaryEntity: DictionaryEntity, view: View) {
-        inflatePopupMenu(dictionaryEntity, view)
-    }
+
+    override fun itemLongClicked(dictionaryEntity: DictionaryEntity, view: View) = inflatePopupMenu(dictionaryEntity, view)
 
     @SuppressLint("CheckResult")
     private fun inflatePopupMenu(dictionaryEntity: DictionaryEntity, view: View) {
@@ -192,24 +180,17 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
         dialog.show(fragmentManager, "editDialog")
     }
 
-    private fun showWarningDeleteDialog(dictionaryEntity: DictionaryEntity) {
-        ActionAlertDialog.showDialog(activity!!, activity?.resources?.getString(R.string.warning)!!,
-                activity?.resources?.getString(R.string.deleteMessage)!!,
-                activity?.resources?.getString(R.string.delete)!!,
-                activity?.resources?.getString(R.string.cancel)!!,
-                DialogInterface.OnClickListener { dialogInterface, i ->
-                    localAndRemoteAction(
-                            WorkerUtil.buildLocalRequest(
-                                    getEntityData(dictionaryEntity),
-                                    DeleteLocalWorker::class.java),
-                            WorkerUtil.buildRemoteRequest(
-                                    Data.Builder().putInt("id", dictionaryEntity.id).build(),
-                                    WorkerUtil.getConstraints(),
-                                    DeleteRemoteWorker::class.java)
-                    )
-                },
-                DialogInterface.OnClickListener { dialogInterface, i -> })
-    }
+    private fun showWarningDeleteDialog(dictionaryEntity: DictionaryEntity) = ActionAlertDialog.showDialog(activity!!, activity?.resources?.getString(R.string.warning)!!,
+            activity?.resources?.getString(R.string.deleteMessage)!!,
+            activity?.resources?.getString(R.string.delete)!!,
+            activity?.resources?.getString(R.string.cancel)!!,
+            DialogInterface.OnClickListener { dialogInterface, i -> buildDeleteAction(dictionaryEntity) },
+            DialogInterface.OnClickListener { dialogInterface, i -> })
+
+
+    private fun buildDeleteAction(dictionaryEntity: DictionaryEntity) = WorkerUtil.localAndRemoteAction(
+            WorkerUtil.buildLocalRequest(getEntityData(dictionaryEntity), DeleteLocalWorker::class.java),
+            WorkerUtil.buildRemoteRequest(Data.Builder().putInt("id", dictionaryEntity.id).build(), WorkerUtil.getConstraints(), DeleteRemoteWorker::class.java))
 
     private fun getEntityData(dictionaryEntity: DictionaryEntity): Data = Data.Builder()
             .putInt("id", dictionaryEntity.id)
@@ -217,21 +198,6 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
             .putString("meaning", dictionaryEntity.meaning)
             .putLong("time", dictionaryEntity.dateModified)
             .build()
-
-
-    //TODO SHIFT TO UTILITY CLASS
-    private fun localAndRemoteAction(localRequest: OneTimeWorkRequest, remoteRequest: OneTimeWorkRequest) {
-        val workManager: WorkManager = WorkManager.getInstance()
-        workManager.beginWith(localRequest)
-                .then(remoteRequest)
-                .enqueue()
-        val status = workManager.getStatusById(remoteRequest.id)
-                .observe(this, androidx.lifecycle.Observer {
-                    if (it != null && it.state.isFinished) {
-                        //DELETE FROM DATABASE COMPLETE
-                    }
-                })
-    }
 
     override fun onStart() {
         super.onStart()
@@ -246,7 +212,7 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
     @Subscribe
     fun WordListDownloadedEvent(wordListDownloaded: WordListDownloaded) {
         dictionaryViewModel.insertLocal(wordListDownloaded.wordList)
-        dictionaryViewModel.deleteObsoleteData(wordListDownloaded.wordList.stream().map(DictionaryEntity::id).collect(Collectors.toList()))
+        dictionaryViewModel.deleteObsoleteData(wordListDownloaded.wordList.map(DictionaryEntity::id))
     }
 
     private fun cleanUp() {
@@ -258,5 +224,4 @@ class DictionaryListFragment : Fragment(), ItemClickListener, ItemLongClickListe
         cleanUp()
         super.onDestroy()
     }
-
 }

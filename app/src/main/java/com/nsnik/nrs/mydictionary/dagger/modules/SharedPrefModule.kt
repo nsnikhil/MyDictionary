@@ -36,8 +36,6 @@ class SharedPrefModule {
 
     @ApplicationScope
     @Provides
-    fun provideSharedPreferences(@ApplicationQualifier context: Context): SharedPreferences{
-        return PreferenceManager.getDefaultSharedPreferences(context)
-    }
+    fun provideSharedPreferences(@ApplicationQualifier context: Context): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
 }

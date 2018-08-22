@@ -32,15 +32,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
-import androidx.work.*
+import androidx.work.Data
 import com.google.android.material.textfield.TextInputEditText
 import com.jakewharton.rxbinding2.view.RxView
 import com.nsnik.nrs.mydictionary.R
 import com.nsnik.nrs.mydictionary.model.DictionaryEntity
-import com.nsnik.nrs.mydictionary.util.worker.InsertLocalWork
-import com.nsnik.nrs.mydictionary.util.worker.InsertRemoteWork
-import com.nsnik.nrs.mydictionary.util.worker.UpdateLocalWorker
-import com.nsnik.nrs.mydictionary.util.worker.UpdateRemoteWorker
+import com.nsnik.nrs.mydictionary.util.worker.*
 import com.nsnik.nrs.mydictionary.viewModel.DictionaryViewModel
 import com.twitter.serial.stream.bytebuffer.ByteBufferSerial
 import io.reactivex.disposables.CompositeDisposable
@@ -82,7 +79,6 @@ class AddNewWordDialogFragment : DialogFragment() {
         if (dictionaryEntity != null) setValues()
     }
 
-
     private fun setValues() {
         newEntryWord.setText(dictionaryEntity?.word)
         newEntryMeaning.setText(dictionaryEntity?.meaning)
@@ -92,29 +88,27 @@ class AddNewWordDialogFragment : DialogFragment() {
 
     private fun getFormattedText(text: String?) = Html.fromHtml("<font color='#344955'>$text</font>", Html.FROM_HTML_MODE_LEGACY)
 
-    private fun listeners() {
-        compositeDisposable.addAll(
-                RxView.clicks(newEntryAdd).subscribe {
-                    if (isValid()) {
-                        if (dictionaryEntity == null) {
-                            localAndRemoteAction(
-                                    buildLocalRequest(getNewData(), InsertLocalWork::class.java),
-                                    buildRemoteRequest(getNewData(), getConstraints(), InsertRemoteWork::class.java))
-                        } else {
-                            localAndRemoteAction(
-                                    buildLocalRequest(getEntityData(), UpdateLocalWorker::class.java),
-                                    buildRemoteRequest(getEntityData(), getConstraints(), UpdateRemoteWorker::class.java)
-                            )
-                        }
-                    }
-                },
-                RxView.clicks(newEntryCancel).subscribe { dismiss() }
-        )
-    }
+    private fun listeners() = compositeDisposable.addAll(
+            RxView.clicks(newEntryAdd).subscribe {
+                if (isValid()) {
+                    if (dictionaryEntity == null) buildInsertAction()
+                    else buildUpdateAction()
+                    dismiss()
+                }
+            },
+            RxView.clicks(newEntryCancel).subscribe { dismiss() })
+
+
+    private fun buildInsertAction() = WorkerUtil.localAndRemoteAction(
+            WorkerUtil.buildLocalRequest(getNewData(), InsertLocalWork::class.java),
+            WorkerUtil.buildRemoteRequest(getNewData(), WorkerUtil.getConstraints(), InsertRemoteWork::class.java))
+
+    private fun buildUpdateAction() = WorkerUtil.localAndRemoteAction(
+            WorkerUtil.buildLocalRequest(getEntityData(), UpdateLocalWorker::class.java),
+            WorkerUtil.buildRemoteRequest(getEntityData(), WorkerUtil.getConstraints(), UpdateRemoteWorker::class.java))
 
     private fun isValid(): Boolean = checkEmpty(newEntryWord, activity?.resources?.getString(R.string.errorNoWord)) &&
             checkEmpty(newEntryMeaning, activity?.resources?.getString(R.string.errorNoMeaning))
-
 
     private fun checkEmpty(textInputEditText: TextInputEditText, errorMessage: String?): Boolean {
         if (textInputEditText.text.toString().isEmpty()) {
@@ -123,25 +117,6 @@ class AddNewWordDialogFragment : DialogFragment() {
         }
         return true
     }
-
-    //TODO SHIFT TO UTILITY CLASS
-    private fun localAndRemoteAction(localRequest: OneTimeWorkRequest, remoteRequest: OneTimeWorkRequest) {
-        val workManager: WorkManager = WorkManager.getInstance()
-        workManager.beginWith(localRequest)
-                .then(remoteRequest)
-                .enqueue()
-        val status = workManager.getStatusById(remoteRequest.id)
-                .observe(this, androidx.lifecycle.Observer {
-                    if (it != null && it.state.isFinished) {
-                        //DELETE FROM DATABASE COMPLETE
-                    }
-                })
-
-    }
-
-    private fun getConstraints(): Constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
 
     private fun getNewData(): Data = Data.Builder()
             .putString("word", newEntryWord.text.toString())
@@ -155,16 +130,6 @@ class AddNewWordDialogFragment : DialogFragment() {
             .putString("meaning", newEntryMeaning.text.toString())
             .putLong("time", Calendar.getInstance().timeInMillis)
             .build()
-
-    private fun buildLocalRequest(data: Data, workerClass: Class<out Worker>): OneTimeWorkRequest = OneTimeWorkRequest.Builder(workerClass)
-            .setInputData(data)
-            .build()
-
-    private fun buildRemoteRequest(data: Data, constraints: Constraints, workerClass: Class<out Worker>): OneTimeWorkRequest =
-            OneTimeWorkRequest.Builder(workerClass)
-                    .setConstraints(constraints)
-                    .setInputData(data)
-                    .build()
 
     private fun cleanUp() {
         compositeDisposable.clear()
@@ -183,5 +148,4 @@ class AddNewWordDialogFragment : DialogFragment() {
         super.onDestroy()
         cleanUp()
     }
-
 }

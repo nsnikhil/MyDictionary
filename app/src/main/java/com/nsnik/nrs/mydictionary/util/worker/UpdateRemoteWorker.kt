@@ -29,7 +29,7 @@ import com.nsnik.nrs.mydictionary.MyApplication
 class UpdateRemoteWorker : Worker() {
 
     override fun doWork(): Result {
-        (applicationContext as MyApplication).networkUtil.updateWord(WorkerUtil.getWordForUpdate(inputData))
+        (applicationContext as MyApplication).networkUtil.updateWord(WorkerUtil.getWord(inputData))
         return Result.SUCCESS
     }
 

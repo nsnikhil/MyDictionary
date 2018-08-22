@@ -29,7 +29,7 @@ import com.nsnik.nrs.mydictionary.MyApplication
 class DeleteLocalWorker : Worker() {
 
     override fun doWork(): Result {
-        (applicationContext as MyApplication).dbUtil.deleteWord(listOf(WorkerUtil.getWordForUpdate(inputData)))
+        (applicationContext as MyApplication).dbUtil.deleteWord(listOf(WorkerUtil.getWord(inputData)))
         return Result.SUCCESS
     }
 

@@ -29,7 +29,7 @@ import com.nsnik.nrs.mydictionary.MyApplication
 class UpdateLocalWorker : Worker() {
 
     override fun doWork(): Result {
-        (applicationContext as MyApplication).dbUtil.updateWords(listOf(WorkerUtil.getWordForUpdate(inputData)))
+        (applicationContext as MyApplication).dbUtil.updateWords(listOf(WorkerUtil.getWord(inputData)))
         return Result.SUCCESS
     }
 

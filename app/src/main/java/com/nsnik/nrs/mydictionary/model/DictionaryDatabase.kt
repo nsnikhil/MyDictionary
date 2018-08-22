@@ -26,7 +26,7 @@ package com.nsnik.nrs.mydictionary.model
 import androidx.room.Database
 import androidx.room.RoomDatabase
 
-@Database(entities = [DictionaryEntity::class], version = 1)
+@Database(entities = [DictionaryEntity::class], version = 2)
 abstract class DictionaryDatabase: RoomDatabase() {
     abstract val dictionaryDao: DictionaryDao
 }

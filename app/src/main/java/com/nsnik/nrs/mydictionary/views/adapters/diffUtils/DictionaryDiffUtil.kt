@@ -28,12 +28,8 @@ import com.nsnik.nrs.mydictionary.model.DictionaryEntity
 
 class DictionaryDiffUtil : DiffUtil.ItemCallback<DictionaryEntity>() {
 
-    override fun areItemsTheSame(oldItem: DictionaryEntity, newItem: DictionaryEntity): Boolean {
-        return oldItem.id == newItem.id
-    }
+    override fun areItemsTheSame(oldItem: DictionaryEntity, newItem: DictionaryEntity): Boolean = oldItem.id == newItem.id
 
-    override fun areContentsTheSame(oldItem: DictionaryEntity, newItem: DictionaryEntity): Boolean {
-        return oldItem == newItem
-    }
+    override fun areContentsTheSame(oldItem: DictionaryEntity, newItem: DictionaryEntity): Boolean = oldItem == newItem
 
 }

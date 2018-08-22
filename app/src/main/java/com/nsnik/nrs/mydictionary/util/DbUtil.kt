@@ -40,9 +40,9 @@ import javax.inject.Inject
 @ApplicationScope
 class DbUtil @Inject constructor(private val dictionaryDatabase: DictionaryDatabase) {
 
-    fun getWordList(): LiveData<List<DictionaryEntity>> {
-        return dictionaryDatabase.dictionaryDao.getWordList()
-    }
+    //STREAMS CANNOT BE USED HERE
+    fun getWordList(): LiveData<List<DictionaryEntity>> = dictionaryDatabase.dictionaryDao.getWordList()
+
 
     fun insertWords(dictionaryEntity: List<DictionaryEntity>) {
         val single = Single.fromCallable { dictionaryDatabase.dictionaryDao.insertWords(dictionaryEntity) }

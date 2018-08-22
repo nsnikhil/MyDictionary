@@ -36,40 +36,22 @@ class DictionaryViewModel(application: Application) : AndroidViewModel(applicati
     private val dbUtil: DbUtil = (application as MyApplication).dbUtil
     private val networkUtil: NetworkUtil = (application as MyApplication).networkUtil
 
-    fun getLocalList(): LiveData<List<DictionaryEntity>> {
-        return dbUtil.getWordList()
-    }
+    fun getLocalList(): LiveData<List<DictionaryEntity>> = dbUtil.getWordList()
 
-    fun insertLocal(dictionaryEntity: List<DictionaryEntity>) {
-        dbUtil.insertWords(dictionaryEntity)
-    }
+    fun insertLocal(dictionaryEntity: List<DictionaryEntity>) = dbUtil.insertWords(dictionaryEntity)
 
-    fun updateLocal(dictionaryEntity: List<DictionaryEntity>) {
-        dbUtil.updateWords(dictionaryEntity)
-    }
+    fun updateLocal(dictionaryEntity: List<DictionaryEntity>) = dbUtil.updateWords(dictionaryEntity)
 
-    fun deleteLocal(dictionaryEntity: List<DictionaryEntity>) {
-        dbUtil.deleteWord(dictionaryEntity)
-    }
+    fun deleteLocal(dictionaryEntity: List<DictionaryEntity>) = dbUtil.deleteWord(dictionaryEntity)
 
-    fun deleteObsoleteData(ids: List<Int>) {
-        dbUtil.deleteObsoleteData(ids)
-    }
+    fun deleteObsoleteData(ids: List<Int>) = dbUtil.deleteObsoleteData(ids)
 
-    fun getRemoteList() {
-        networkUtil.getWordList()
-    }
+    fun getRemoteList() = networkUtil.getWordList()
 
-    fun insertRemote(vararg dictionaryEntity: DictionaryEntity) {
-        dictionaryEntity.forEach { networkUtil.insertWord(it) }
-    }
+    fun insertRemote(vararg dictionaryEntity: DictionaryEntity) = dictionaryEntity.forEach { networkUtil.insertWord(it) }
 
-    fun updateRemote(vararg dictionaryEntity: DictionaryEntity) {
-        dictionaryEntity.forEach { networkUtil.updateWord(it) }
-    }
+    fun updateRemote(vararg dictionaryEntity: DictionaryEntity) = dictionaryEntity.forEach { networkUtil.updateWord(it) }
 
-    fun deleteRemote(vararg id: Int) {
-        id.forEach { networkUtil.deleteWord(it) }
-    }
+    fun deleteRemote(vararg id: Int) = id.forEach { networkUtil.deleteWord(it) }
 
 }

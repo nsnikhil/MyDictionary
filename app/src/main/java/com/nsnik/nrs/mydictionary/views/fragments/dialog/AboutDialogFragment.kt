@@ -41,7 +41,6 @@ import com.nsnik.nrs.mydictionary.R
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_about_dialog.*
 
-
 class AboutDialogFragment : DialogFragment() {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
@@ -73,7 +72,7 @@ class AboutDialogFragment : DialogFragment() {
                 .setShowTitle(true)
                 .build()
         if (customTabsIntent.intent.resolveActivity(activity?.packageManager!!) != null) customTabsIntent.launchUrl(activity, Uri.parse(url))
-        else Toast.makeText(activity, "", Toast.LENGTH_LONG).show()
+        else Toast.makeText(activity, activity?.resources?.getString(R.string.errorNoActivityToHandleChrome), Toast.LENGTH_LONG).show()
     }
 
     override fun onResume() {

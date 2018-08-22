@@ -44,13 +44,14 @@ class DatabaseModule {
 
     @Provides
     @ApplicationScope
-    internal fun getNoteDatabase(@ApplicationQualifier context: Context, @DatabaseName @ApplicationScope databaseName: String): DictionaryDatabase {
-        return Room.databaseBuilder(context, DictionaryDatabase::class.java, databaseName).build()
-    }
+    internal fun getNoteDatabase(@ApplicationQualifier context: Context, @DatabaseName @ApplicationScope databaseName: String): DictionaryDatabase =
+            Room.databaseBuilder(context, DictionaryDatabase::class.java, databaseName)
+                    .fallbackToDestructiveMigration()
+                    .build()
+
 
     companion object {
-        private const val DATABASE_NAME = "notesDb"
-        private const val DEFAULT_FOLDER_NAME = "noFolder"
+        private const val DATABASE_NAME = "dictionary"
     }
 
 }

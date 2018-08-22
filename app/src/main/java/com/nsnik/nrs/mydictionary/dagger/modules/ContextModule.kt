@@ -31,12 +31,12 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class ContextModule(private val mContext: Context) {
+class ContextModule(private val context: Context) {
 
     @Provides
     @ApplicationQualifier
     @ApplicationScope
     internal fun provideContext(): Context {
-        return this.mContext
+        return this.context
     }
 }

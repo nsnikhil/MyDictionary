@@ -41,9 +41,7 @@ class NetworkModule {
 
     @Provides
     @BaseUrl
-    fun getBaseUrl(): String {
-        return this.baseUrl
-    }
+    fun getBaseUrl(): String = this.baseUrl
 
     @Provides
     fun getHttpLoggingInterceptor(): HttpLoggingInterceptor {
@@ -53,19 +51,17 @@ class NetworkModule {
     }
 
     @Provides
-    fun getOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
-        return OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor).build()
-    }
+    fun getOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient =
+            OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor).build()
+
 
     @Provides
     @ApplicationScope
-    fun getRetrofitClient(@BaseUrl baseUrl: String, okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(okHttpClient)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
-                .build()
-    }
+    fun getRetrofitClient(@BaseUrl baseUrl: String, okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(okHttpClient)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
+            .build()
 
 }

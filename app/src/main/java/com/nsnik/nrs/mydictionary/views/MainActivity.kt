@@ -58,7 +58,6 @@ class MainActivity : AppCompatActivity() {
     fun getIdlingResource(): IdlingResource {
         if (mIdlingResource == null) mIdlingResource = SimpleIdlingResource()
         return mIdlingResource as IdlingResource
-
     }
 
     override fun onDestroy() {
